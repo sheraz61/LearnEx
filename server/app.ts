@@ -3,6 +3,9 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import errorMiddleware from "./middleware/error.js";
+import userRouter from './routes/user.route.js'
+
+
 dotenv.config();
 
 export const app = express();
@@ -24,6 +27,9 @@ app.get("/", (req: Request, res: Response, next: NextFunction) => {
     message: "Welcome to Learnex API",
   });
 });
+
+// routes
+app.use('/api/v1/user',userRouter)
 // testing api
 app.get("/test", (req: Request, res: Response, next: NextFunction) => {
   res.status(200).json({

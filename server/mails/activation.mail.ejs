@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Activate Your Learnex Account</title>
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background: #f4f7fb;
+        font-family: Arial, Helvetica, sans-serif;
+        color: #333;
+        padding: 30px 15px;
+      }
+
+      .container {
+        max-width: 600px;
+        margin: auto;
+        background: #fff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+      }
+
+      .header {
+        background: #4f46e5;
+        color: #fff;
+        padding: 35px;
+        text-align: center;
+      }
+
+      .header h1 {
+        font-size: 32px;
+        margin-bottom: 8px;
+      }
+
+      .header p {
+        opacity: 0.9;
+      }
+
+      .content {
+        padding: 40px;
+        line-height: 1.8;
+      }
+
+      .content h2 {
+        margin-bottom: 15px;
+        color: #111827;
+      }
+
+      .otp-box {
+        margin: 30px auto;
+        width: 220px;
+        text-align: center;
+        padding: 18px;
+        border-radius: 10px;
+        background: #eef2ff;
+        border: 2px dashed #4f46e5;
+        font-size: 34px;
+        font-weight: bold;
+        letter-spacing: 10px;
+        color: #4f46e5;
+      }
+
+      .note {
+        margin-top: 25px;
+        background: #f9fafb;
+        border-left: 4px solid #4f46e5;
+        padding: 15px;
+        border-radius: 6px;
+        font-size: 14px;
+        color: #555;
+      }
+
+      .footer {
+        padding: 25px;
+        text-align: center;
+        font-size: 13px;
+        color: #777;
+        background: #fafafa;
+        border-top: 1px solid #eee;
+      }
+
+      a {
+        color: #4f46e5;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>Learnex</h1>
+        <p>Learn. Build. Grow.</p>
+      </div>
+
+      <div class="content">
+        <h2>Hello <%= user.name %>, 👋</h2>
+
+        <p>
+          Welcome to <strong>Learnex</strong>! We're excited to have you join
+          our learning community.
+        </p>
+
+        <p>To activate your account, please use the verification code below:</p>
+
+        <div class="otp-box"><%= activationCode %></div>
+
+        <p>Enter this code in the activation page to verify your account.</p>
+
+        <div class="note">
+          <strong>Security Tip:</strong><br />
+          This code is valid for <strong>5 minutes</strong>. Never share it with
+          anyone. Learnex will never ask for your verification code.
+        </div>
+
+        <br />
+
+        <p>
+          If you didn't create a Learnex account, you can safely ignore this
+          email.
+        </p>
+
+        <br />
+
+        <p>Happy Learning! 🚀</p>
+
+        <p>
+          <strong>The Learnex Team</strong>
+        </p>
+      </div>
+
+      <div class="footer">
+        © <%= new Date().getFullYear() %> Learnex. All rights reserved.
+        <br /><br />
+        Learn skills from industry experts and advance your career.
+      </div>
+    </div>
+  </body>
+</html>
