@@ -2,14 +2,15 @@ import { Request, Response, NextFunction } from "express";
 import userModel, { IUser } from "../models/user.model.js";
 import ErrorHandler from "../utils/ErrorHandler.js";
 import catchAsyncError from "../middleware/catchAsyncError.js";
-import jwt, { Secret } from "jsonwebtoken";
+import jwt, { JwtPayload, Secret } from "jsonwebtoken";
 import dotenv from "dotenv";
 import ejs from "ejs";
 import path from "path";
 import { fileURLToPath } from "url";
 import sendMail from "../utils/sendMail.js";
-import { sendToken } from "../utils/jwt.js";
+import { accessTokenOptions, refreshTokenOptions, sendToken } from "../utils/jwt.js";
 import { redis } from "../utils/redis.js";
+import { getUserById } from "../services/user.service.js";
 
 dotenv.config();
 
@@ -178,3 +179,58 @@ export const logoutUser = catchAsyncError(
 );
 
 
+// update access token
+export const updateAccessToken = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const refresh_token = req.cookies.refresh_token as string;
+      const decoded = jwt.verify(
+        refresh_token,
+        process.env.REFRESH_TOKEN as string
+      ) as JwtPayload;
+      if (!decoded) {
+        return next(new ErrorHandler("Could not refresh token", 400));
+      }
+      const session = await redis.get(decoded.id as string);
+      if (!session) {
+        return next(new ErrorHandler("Please login to access this resource", 400));
+      }
+      const user = JSON.parse(session);
+      const accessToken = jwt.sign(
+        { id: user._id },
+        process.env.ACCESS_TOKEN as string,
+        { expiresIn: "5m" }
+      );
+      const refreshToken = jwt.sign(
+        { id: user._id },
+        process.env.REFRESH_TOKEN as string,
+        { expiresIn: "3d" }
+      );
+      req.user = user;
+      // Cookie options would be defined here
+      res.cookie("access_token", accessToken, accessTokenOptions);
+      res.cookie("refresh_token", refreshToken, refreshTokenOptions);
+      
+res.status(200).json({
+    status:'success',
+    accessToken,
+})
+
+
+      next();
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 400));
+    }
+  }
+);
+
+
+// get user info
+export const getUserInfo = catchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+  try {
+      const userId = req.user?._id;
+      getUserById(userId, res);
+  } catch (error: any) {
+      return next(new ErrorHandler(error.message, 400));
+  }
+})
