@@ -8,7 +8,11 @@ import ejs from "ejs";
 import path from "path";
 import { fileURLToPath } from "url";
 import sendMail from "../utils/sendMail.js";
-import { accessTokenOptions, refreshTokenOptions, sendToken } from "../utils/jwt.js";
+import {
+  accessTokenOptions,
+  refreshTokenOptions,
+  sendToken,
+} from "../utils/jwt.js";
 import { redis } from "../utils/redis.js";
 import { getUserById } from "../services/user.service.js";
 
@@ -163,8 +167,8 @@ export const logoutUser = catchAsyncError(
       res.cookie("access_token", "", { maxAge: 1 });
       res.cookie("refresh_token", "", { maxAge: 1 });
       const userId = req.user?._id;
-      if(!userId){
-      return next(new ErrorHandler('Unauthorized', 400));
+      if (!userId) {
+        return next(new ErrorHandler("Unauthorized", 400));
       }
       redis.del(userId.toString());
 
@@ -178,7 +182,6 @@ export const logoutUser = catchAsyncError(
   },
 );
 
-
 // update access token
 export const updateAccessToken = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -186,54 +189,56 @@ export const updateAccessToken = catchAsyncError(
       const refresh_token = req.cookies.refresh_token as string;
       const decoded = jwt.verify(
         refresh_token,
-        process.env.REFRESH_TOKEN as string
+        process.env.REFRESH_TOKEN as string,
       ) as JwtPayload;
       if (!decoded) {
         return next(new ErrorHandler("Could not refresh token", 400));
       }
       const session = await redis.get(decoded.id as string);
       if (!session) {
-        return next(new ErrorHandler("Please login to access this resource", 400));
+        return next(
+          new ErrorHandler("Please login to access this resource", 400),
+        );
       }
       const user = JSON.parse(session);
       const accessToken = jwt.sign(
         { id: user._id },
         process.env.ACCESS_TOKEN as string,
-        { expiresIn: "5m" }
+        { expiresIn: "5m" },
       );
       const refreshToken = jwt.sign(
         { id: user._id },
         process.env.REFRESH_TOKEN as string,
-        { expiresIn: "3d" }
+        { expiresIn: "3d" },
       );
       req.user = user;
       // Cookie options would be defined here
       res.cookie("access_token", accessToken, accessTokenOptions);
       res.cookie("refresh_token", refreshToken, refreshTokenOptions);
-      
-res.status(200).json({
-    status:'success',
-    accessToken,
-})
 
+      res.status(200).json({
+        status: "success",
+        accessToken,
+      });
 
       next();
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
     }
-  }
+  },
 );
 
-
 // get user info
-export const getUserInfo = catchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
-  try {
+export const getUserInfo = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
       const userId = req.user?._id;
       getUserById(userId, res);
-  } catch (error: any) {
+    } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
-  }
-})
+    }
+  },
+);
 
 // social auth
 interface ISocialAuthBody {
@@ -247,17 +252,17 @@ export const socialAuth = catchAsyncError(
     try {
       const { email, name, avatar } = req.body as ISocialAuthBody;
       const user = await userModel.findOne({ email });
-    if (!user) {
-      const newUser = await userModel.create({ email, name, avatar });
-      sendToken(newUser, 200, res);
-    } else {
+      if (!user) {
+        const newUser = await userModel.create({ email, name, avatar });
+        sendToken(newUser, 200, res);
+      } else {
         sendToken(user, 200, res);
+      }
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 400));
     }
-  }catch (error: any) {
-     return next(new ErrorHandler(error.message, 400));
-  }
-});
-
+  },
+);
 
 //update user info
 interface IUpdateUserInfo {
@@ -268,38 +273,40 @@ interface IUpdateUserInfo {
 export const updateUserInfo = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-    const { name, email } = req.body as IUpdateUserInfo;
-    const userId = req.user?._id;
-    if (!userId) {
-  return next(new ErrorHandler("User not found", 404));
-}
+      const { name, email } = req.body as IUpdateUserInfo;
+      const userId = req.user?._id;
+      if (!userId) {
+        return next(new ErrorHandler("User not found", 404));
+      }
 
-    const user = await userModel.findById(userId);
-    if (!user) {
-  return next(new ErrorHandler("User not found", 404));
-}
+      const user = await userModel.findById(userId);
+      if (!user) {
+        return next(new ErrorHandler("User not found", 404));
+      }
 
-    if (email) {
-    const isEmailExist = await userModel.findOne({ email });
+      if (email) {
+        const isEmailExist = await userModel.findOne({ email });
 
-    if (isEmailExist) {
-    return next(new ErrorHandler("Email already exist", 400));
-    }
+        if (isEmailExist) {
+          return next(new ErrorHandler("Email already exist", 400));
+        }
 
-    user.email = email;
-    } 
-    if (name) {
-    user.name = name;
-    } 
-    await user?.save();
-    
-    await redis.set(userId.toString(), JSON.stringify(user));
-    res.status(201).json({
-    success: true,
-    user,
-    });
+        user.email = email;
+      }
+      if (name) {
+        user.name = name;
+      }
+      await user?.save();
+
+      await redis.set(userId.toString(), JSON.stringify(user));
+      res.status(201).json({
+        success: true,
+        user,
+      });
     } catch (error: any) {
-    return next(new ErrorHandler(error.message, 400));
+      return next(new ErrorHandler(error.message, 400));
     }
-  }
+  },
 );
+
+
