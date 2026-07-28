@@ -234,3 +234,72 @@ export const getUserInfo = catchAsyncError(async (req: Request, res: Response, n
       return next(new ErrorHandler(error.message, 400));
   }
 })
+
+// social auth
+interface ISocialAuthBody {
+  email: string;
+  name: string;
+  avatar: any;
+}
+
+export const socialAuth = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { email, name, avatar } = req.body as ISocialAuthBody;
+      const user = await userModel.findOne({ email });
+    if (!user) {
+      const newUser = await userModel.create({ email, name, avatar });
+      sendToken(newUser, 200, res);
+    } else {
+        sendToken(user, 200, res);
+    }
+  }catch (error: any) {
+     return next(new ErrorHandler(error.message, 400));
+  }
+});
+
+
+//update user info
+interface IUpdateUserInfo {
+  name?: string;
+  email?: string;
+}
+
+export const updateUserInfo = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+    const { name, email } = req.body as IUpdateUserInfo;
+    const userId = req.user?._id;
+    if (!userId) {
+  return next(new ErrorHandler("User not found", 404));
+}
+
+    const user = await userModel.findById(userId);
+    if (!user) {
+  return next(new ErrorHandler("User not found", 404));
+}
+
+    if (email) {
+    const isEmailExist = await userModel.findOne({ email });
+
+    if (isEmailExist) {
+    return next(new ErrorHandler("Email already exist", 400));
+    }
+
+    user.email = email;
+    } 
+    if (name) {
+    user.name = name;
+    } 
+    await user?.save();
+    
+    await redis.set(userId.toString(), JSON.stringify(user));
+    res.status(201).json({
+    success: true,
+    user,
+    });
+    } catch (error: any) {
+    return next(new ErrorHandler(error.message, 400));
+    }
+  }
+);
