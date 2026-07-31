@@ -13,6 +13,7 @@ import {
   refreshTokenOptions,
   sendToken,
 } from "../utils/jwt.js";
+import cloudinary from 'cloudinary'
 import { redis } from "../utils/redis.js";
 import { getUserById } from "../services/user.service.js";
 
@@ -355,3 +356,65 @@ export const updatePassword = catchAsyncError(
     }
   }
 );
+
+
+
+// update profile picture
+
+interface IUpdateProfilePicture {
+  avatar:string
+}
+
+export const updateProfilePicture = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try{
+      const { avatar } = req.body as IUpdateProfilePicture;
+      const userId = req.user?._id;
+      if (!userId){
+      return next(new ErrorHandler('user not found', 404));
+        
+      }
+      const user = await userModel.findById(userId);
+
+      if (avatar && user) {
+        if (user.avatar?.public_id) {
+          // first delete the old image
+          await cloudinary.v2.uploader.destroy(user?.avatar?.public_id);
+        }
+
+        const myCloud = await cloudinary.v2.uploader.upload(avatar, {
+          folder: "avatarsL",
+          width: 150,
+        });
+
+        user.avatar = {
+          public_id: myCloud.public_id,
+          url: myCloud.secure_url,
+        };
+      } else{
+        const myCloud = await cloudinary.v2.uploader.upload(avatar, {
+          folder: "avatarsL",
+          width: 150,
+        });
+        if(user?.avatar){
+          user.avatar = {
+            public_id: myCloud.public_id,
+            url: myCloud.secure_url,
+          };
+        }
+      
+      }
+    
+
+      await user?.save();
+      await redis.set(userId?.toString(), JSON.stringify(user));
+
+      res.status(200).json({
+        success: true,
+        message:"profile image update successfully",
+        user,
+      });
+    }catch (error: any) { 
+      return next(new ErrorHandler(error.message, 400));
+  }
+})

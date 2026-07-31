@@ -10,6 +10,7 @@ import {
   socialAuth,
   updateUserInfo,
   updatePassword,
+  updateProfilePicture,
 } from "../controllers/user.controller.js";
 import { isAuthenticated } from "../middleware/auth.js";
 
@@ -23,6 +24,7 @@ router.get("/me", isAuthenticated,getUserInfo);
 router.get("/social-auth",socialAuth);
 router.put("/update-user-info",isAuthenticated,updateUserInfo);
 router.put("/update-user-password",isAuthenticated,updatePassword);
+router.put("/update-user-avatar",isAuthenticated,updateProfilePicture);
 
 
 export default router;
