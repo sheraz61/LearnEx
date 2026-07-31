@@ -273,6 +273,7 @@ interface IUpdateUserInfo {
 export const updateUserInfo = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
+        console.log(req.body)
       const { name, email } = req.body as IUpdateUserInfo;
       const userId = req.user?._id;
       if (!userId) {
