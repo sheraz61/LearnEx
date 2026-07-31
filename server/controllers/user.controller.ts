@@ -311,3 +311,47 @@ export const updateUserInfo = catchAsyncError(
 );
 
 
+// update user password
+interface IUpdatePassword{
+  oldPassword: string;
+  newPassword: string;
+}
+
+export const updatePassword = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { oldPassword, newPassword } = req.body as IUpdatePassword;
+      if(!oldPassword || !newPassword){
+        return next(new ErrorHandler("Please enter old and new password", 400))
+      }
+       if (!req.user) {
+    return next(new ErrorHandler("User not found", 404));
+}
+      const user = await userModel.findById(req.user?._id).select("+password");
+      if (user?.password === undefined){
+        return next(new ErrorHandler("Invalid user or social login", 400));
+      }
+
+      const isPasswordMatch = await user?.comparePassword(oldPassword);
+
+      if (!isPasswordMatch) {
+        return next(new ErrorHandler("Invalid old password", 400));
+      }
+
+      user.password = newPassword;
+
+      await user.save();
+     
+
+      await redis.set(req.user?._id.toString(), JSON.stringify(user));
+
+      res.status(201).json({
+        success: true,
+        meessage:"password update successfully",
+        user,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 400));
+    }
+  }
+);
