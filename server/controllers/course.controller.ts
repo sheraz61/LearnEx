@@ -5,6 +5,7 @@ import cloudinary from "cloudinary";
 import { createCourse } from "../services/course.service.js";
 import CourseModel from "../models/course.model.js";
 import { redis } from "../utils/redis.js";
+import mongoose from "mongoose";
 // upload course
 export const uploadCourse = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -70,8 +71,84 @@ export const editCourse = catchAsyncError(
       await redis.set(courseId.toString(), JSON.stringify(course)); // update course in redis
       res.status(201).json({
         success: true,
-        message:"Course update Successfully",
+        message: "Course update Successfully",
         course,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  },
+);
+
+// get single course --- without purchasing
+export const getSingleCourse = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const courseId = req.params.id;
+      if (!courseId) {
+        return new ErrorHandler("Course not found", 404);
+      }
+      const isCacheExist = await redis.get(courseId.toString());
+
+      if (isCacheExist) {
+        const course = JSON.parse(isCacheExist);
+        res.status(200).json({
+          success: true,
+          course,
+        });
+      } else {
+        const course = await CourseModel.aggregate([
+          {
+            $match: {
+              _id: new mongoose.Types.ObjectId(req.params.id as string),
+            },
+          },
+          {
+            $project: {
+              "courseData.videoUrl": 0,
+              "courseData.links": 0,
+              "courseData.questions": 0,
+              "courseData.suggestion": 0,
+            },
+          },
+        ]);
+
+        await redis.set(
+          courseId.toString(),
+          JSON.stringify(course),
+          "EX",
+          604800,
+        ); // 7days
+
+        res.status(200).json({
+          success: true,
+          course,
+        });
+      }
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  },
+);
+
+// get all courses --- without purchasing
+export const getAllCourses = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const courses = await CourseModel.aggregate([
+        {
+          $project: {
+            "courseData.videoUrl": 0,
+            "courseData.suggestion": 0,
+            "courseData.questions": 0,
+            "courseData.links": 0,
+          },
+        },
+      ]);
+
+      res.status(200).json({
+        success: true,
+        courses,
       });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
