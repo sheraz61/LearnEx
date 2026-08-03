@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 import errorMiddleware from "./middleware/error.js";
 import userRouter from './routes/user.route.js'
 import courseRouter from './routes/course.route.js'
-
+import orderRouter from './routes/order.route.js'
 dotenv.config();
 
 export const app = express();
@@ -32,6 +32,7 @@ app.get("/", (req: Request, res: Response, next: NextFunction) => {
 // routes
 app.use('/api/v1/user',userRouter)
 app.use('/api/v1',courseRouter)
+app.use('/api/v1',orderRouter)
 // testing api
 app.get("/test", (req: Request, res: Response, next: NextFunction) => {
   res.status(200).json({

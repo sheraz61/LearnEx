@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LearnEx - Order Confirmation</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+    }
+
+    body{
+      font-family:'Poppins',sans-serif;
+      background:#f5f7fb;
+      color:#333;
+      padding:40px 20px;
+    }
+
+    .container{
+      max-width:650px;
+      margin:auto;
+      background:#ffffff;
+      border-radius:14px;
+      overflow:hidden;
+      box-shadow:0 10px 30px rgba(0,0,0,.08);
+    }
+
+    .header{
+      background:linear-gradient(135deg,#4F46E5,#6D5EF6);
+      color:#fff;
+      text-align:center;
+      padding:40px 30px;
+    }
+
+    .header h1{
+      font-size:32px;
+      margin-bottom:10px;
+    }
+
+    .header p{
+      font-size:16px;
+      opacity:.9;
+    }
+
+    .content{
+      padding:35px;
+    }
+
+    .greeting{
+      font-size:18px;
+      margin-bottom:20px;
+    }
+
+    .description{
+      color:#666;
+      line-height:1.8;
+      margin-bottom:30px;
+    }
+
+    .card{
+      border:1px solid #ececec;
+      border-radius:10px;
+      padding:25px;
+      background:#fafafa;
+    }
+
+    .card h2{
+      color:#4F46E5;
+      margin-bottom:20px;
+      font-size:22px;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+    }
+
+    td{
+      padding:12px 0;
+      border-bottom:1px solid #ececec;
+      font-size:15px;
+    }
+
+    td:first-child{
+      font-weight:600;
+      color:#555;
+    }
+
+    td:last-child{
+      text-align:right;
+    }
+
+    .total{
+      font-size:18px;
+      font-weight:700;
+      color:#4F46E5;
+    }
+
+    .btn{
+      display:inline-block;
+      margin-top:35px;
+      background:#4F46E5;
+      color:#fff !important;
+      padding:14px 28px;
+      border-radius:8px;
+      text-decoration:none;
+      font-weight:600;
+    }
+
+    .footer{
+      padding:30px;
+      text-align:center;
+      font-size:14px;
+      color:#777;
+      background:#fafafa;
+      border-top:1px solid #ececec;
+    }
+
+    .footer a{
+      color:#4F46E5;
+      text-decoration:none;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>🎉 Purchase Confirmed!</h1>
+        <p>Welcome to LearnEx. Your learning journey starts now.</p>
+    </div>
+
+    <div class="content">
+
+        <p class="greeting">
+            Hi Learner,
+        </p>
+
+        <p class="description">
+            Thank you for choosing <strong>LearnEx</strong>.
+            Your payment has been successfully processed, and your course has been added to your account.
+            You can start learning immediately.
+        </p>
+
+        <div class="card">
+
+            <h2>Order Summary</h2>
+
+            <table>
+
+                <tr>
+                    <td>Order ID</td>
+                    <td>#<%= order._id %></td>
+                </tr>
+
+                <tr>
+                    <td>Purchase Date</td>
+                    <td><%= order.date %></td>
+                </tr>
+
+                <tr>
+                    <td>Course</td>
+                    <td><%= order.name %></td>
+                </tr>
+
+                <tr>
+                    <td>Quantity</td>
+                    <td>1</td>
+                </tr>
+
+                <tr>
+                    <td>Price</td>
+                    <td>$<%= order.price %></td>
+                </tr>
+
+                <tr>
+                    <td class="total">Total Paid</td>
+                    <td class="total">$<%= order.price %></td>
+                </tr>
+
+            </table>
+
+        </div>
+
+        <center>
+            <a href="https://learnex.com" class="btn">
+                Go to My Courses
+            </a>
+        </center>
+
+    </div>
+
+    <div class="footer">
+
+        <p>
+            Need help? Contact our support team anytime at
+            <a href="mailto:support@learnex.com">support@learnex.com</a>
+        </p>
+
+        <br>
+
+        <p>
+            © <%= new Date().getFullYear() %> LearnEx. All rights reserved.
+        </p>
+
+        <p>
+            Learn. Build. Grow.
+        </p>
+
+    </div>
+
+</div>
+
+</body>
+</html>
