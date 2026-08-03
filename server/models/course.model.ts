@@ -1,10 +1,16 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
 import { IUser } from "./user.model.js";
 
+interface IReply extends Document {
+  user: IUser;
+  answer: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
 interface IComment extends Document {
   user: IUser;
   question: string;
-  questionReplies?: IComment[];
+  questionReplies: IReply[];
 }
 
 interface IReview extends Document {
@@ -65,10 +71,18 @@ const linkSchema = new Schema<ILink>({
   url: String,
 });
 
+const replySchema = new Schema<IReply>(
+  {
+    user: Object,
+    answer: String,
+  },
+  { timestamps: true },
+);
+
 const commentSchema = new Schema<IComment>({
   user: Object,
   question: String,
-  questionReplies: [Object],
+  questionReplies: [replySchema],
 });
 
 const courseDataSchema = new Schema<ICourseData>({
