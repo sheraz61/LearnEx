@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Reply to Your Question</title>
+</head>
+<body style="margin:0; padding:0; font-family: Arial, Helvetica, sans-serif; background-color:#f4f4f4;">
+
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f4f4; padding:40px 0;">
+    <tr>
+      <td align="center">
+
+        <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff; border-radius:8px; overflow:hidden;">
+
+          <tr>
+            <td style="background:#2563eb; color:#ffffff; padding:20px; text-align:center;">
+              <h1 style="margin:0;">Learnex</h1>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:35px; color:#333333;">
+
+              <h2>Hello <%= name %>, 👋</h2>
+
+              <p>
+                Great news! Someone has replied to your question in the course.
+              </p>
+
+              <p>
+                <strong>Course Lesson:</strong> <%= title %>
+              </p>
+
+              <p>
+                Visit your course to read the reply and continue the discussion with the instructor and other learners.
+              </p>
+
+              <div style="text-align:center; margin:35px 0;">
+                <a href="<%= url %>"
+                   style="background:#2563eb; color:#ffffff; text-decoration:none; padding:12px 24px; border-radius:6px; display:inline-block;">
+                  View Reply
+                </a>
+              </div>
+
+              <p>
+                We encourage you to keep asking questions—learning becomes more effective through discussion and collaboration.
+              </p>
+
+              <p>
+                Happy Learning! 🚀
+              </p>
+
+              <p>
+                <strong>The Learnex Team</strong>
+              </p>
+
+            </td>
+          </tr>
+
+          <tr>
+            <td style="background:#f8f8f8; padding:20px; text-align:center; font-size:13px; color:#777777;">
+              © <%= new Date().getFullYear() %> Learnex. All rights reserved.
+            </td>
+          </tr>
+
+        </table>
+
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>
