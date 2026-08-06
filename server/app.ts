@@ -6,6 +6,7 @@ import errorMiddleware from "./middleware/error.js";
 import userRouter from './routes/user.route.js'
 import courseRouter from './routes/course.route.js'
 import orderRouter from './routes/order.route.js'
+import notificationRouter from './routes/notification.route.js'
 dotenv.config();
 
 export const app = express();
@@ -33,6 +34,7 @@ app.get("/", (req: Request, res: Response, next: NextFunction) => {
 app.use('/api/v1/user',userRouter)
 app.use('/api/v1',courseRouter)
 app.use('/api/v1',orderRouter)
+app.use('/api/v1',notificationRouter)
 // testing api
 app.get("/test", (req: Request, res: Response, next: NextFunction) => {
   res.status(200).json({
