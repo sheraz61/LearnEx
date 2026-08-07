@@ -9,7 +9,7 @@ import ejs from "ejs";
 import sendMail from "../utils/sendMail.js";
 import NotificationModel from "../models/notification.model.js";
 import { redis } from "../utils/redis.js";
-import { newOrder } from "../services/order.service.js";
+import { getAllOrdersService, newOrder } from "../services/order.service.js";
 import { fileURLToPath } from "url";
 
 
@@ -102,4 +102,16 @@ export const createOrder = catchAsyncError(
       return next(new ErrorHandler(error.message, 500));
     }
   },
+);
+
+
+// get All orders --- only for admin
+export const getAllOrders = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      getAllOrdersService(res);
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
 );
