@@ -8,6 +8,7 @@ import courseRouter from './routes/course.route.js'
 import orderRouter from './routes/order.route.js'
 import notificationRouter from './routes/notification.route.js'
 import analyticsRouter from './routes/analytics.route.js'
+import layoutRouter from './routes/layout.route.js'
 dotenv.config();
 
 export const app = express();
@@ -37,6 +38,7 @@ app.use('/api/v1',courseRouter)
 app.use('/api/v1',orderRouter)
 app.use('/api/v1',notificationRouter)
 app.use('/api/v1',analyticsRouter)
+app.use('/api/v1',layoutRouter)
 // testing api
 app.get("/test", (req: Request, res: Response, next: NextFunction) => {
   res.status(200).json({
