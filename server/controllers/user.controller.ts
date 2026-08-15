@@ -13,9 +13,13 @@ import {
   refreshTokenOptions,
   sendToken,
 } from "../utils/jwt.js";
-import cloudinary from 'cloudinary'
+import cloudinary from "../utils/cloudinary.js";
 import { redis } from "../utils/redis.js";
-import { getAllUsersService, getUserById, updateUserRoleService } from "../services/user.service.js";
+import {
+  getAllUsersService,
+  getUserById,
+  updateUserRoleService,
+} from "../services/user.service.js";
 
 dotenv.config();
 
@@ -274,8 +278,7 @@ interface IUpdateUserInfo {
 export const updateUserInfo = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-        console.log(req.body)
-      const { name, email } = req.body as IUpdateUserInfo;
+      const { name } = req.body as IUpdateUserInfo;
       const userId = req.user?._id;
       if (!userId) {
         return next(new ErrorHandler("User not found", 404));
@@ -286,15 +289,7 @@ export const updateUserInfo = catchAsyncError(
         return next(new ErrorHandler("User not found", 404));
       }
 
-      if (email) {
-        const isEmailExist = await userModel.findOne({ email });
-
-        if (isEmailExist) {
-          return next(new ErrorHandler("Email already exist", 400));
-        }
-
-        user.email = email;
-      }
+      
       if (name) {
         user.name = name;
       }
@@ -311,9 +306,8 @@ export const updateUserInfo = catchAsyncError(
   },
 );
 
-
 // update user password
-interface IUpdatePassword{
+interface IUpdatePassword {
   oldPassword: string;
   newPassword: string;
 }
@@ -322,14 +316,14 @@ export const updatePassword = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { oldPassword, newPassword } = req.body as IUpdatePassword;
-      if(!oldPassword || !newPassword){
-        return next(new ErrorHandler("Please enter old and new password", 400))
+      if (!oldPassword || !newPassword) {
+        return next(new ErrorHandler("Please enter old and new password", 400));
       }
-       if (!req.user) {
-    return next(new ErrorHandler("User not found", 404));
-}
+      if (!req.user) {
+        return next(new ErrorHandler("User not found", 404));
+      }
       const user = await userModel.findById(req.user?._id).select("+password");
-      if (user?.password === undefined){
+      if (user?.password === undefined) {
         return next(new ErrorHandler("Invalid user or social login", 400));
       }
 
@@ -342,48 +336,47 @@ export const updatePassword = catchAsyncError(
       user.password = newPassword;
 
       await user.save();
-     
 
       await redis.set(req.user?._id.toString(), JSON.stringify(user));
 
       res.status(201).json({
         success: true,
-        meessage:"password update successfully",
+        meessage: "password update successfully",
         user,
       });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
     }
-  }
+  },
 );
-
-
 
 // update profile picture
 
 interface IUpdateProfilePicture {
-  avatar:string
+  avatar: string;
 }
 
 export const updateProfilePicture = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
-    try{
+    try {
       const { avatar } = req.body as IUpdateProfilePicture;
       const userId = req.user?._id;
-      if (!userId){
-      return next(new ErrorHandler('user not found', 404));
-        
+      if (!userId) {
+        return next(new ErrorHandler("userId not found", 400));
       }
       const user = await userModel.findById(userId);
+      if (!user) {
+        return next(new ErrorHandler("User not found", 400));
+      }
 
-      if (avatar && user) {
+      if (avatar) {
         if (user.avatar?.public_id) {
           // first delete the old image
-          await cloudinary.v2.uploader.destroy(user?.avatar?.public_id);
+          await cloudinary.uploader.destroy(user.avatar.public_id);
         }
 
-        const myCloud = await cloudinary.v2.uploader.upload(avatar, {
-          folder: "avatarsL",
+        const myCloud = await cloudinary.uploader.upload(avatar, {
+          folder: "avatarslearnex",
           width: 150,
         });
 
@@ -391,34 +384,32 @@ export const updateProfilePicture = catchAsyncError(
           public_id: myCloud.public_id,
           url: myCloud.secure_url,
         };
-      } else{
-        const myCloud = await cloudinary.v2.uploader.upload(avatar, {
-          folder: "avatarsL",
+      } else {
+        const myCloud = await cloudinary.uploader.upload(avatar, {
+          folder: "avatarslearnex",
           width: 150,
         });
-        if(user?.avatar){
+        if (user?.avatar) {
           user.avatar = {
             public_id: myCloud.public_id,
             url: myCloud.secure_url,
           };
         }
-      
       }
-    
 
-      await user?.save();
-      await redis.set(userId?.toString(), JSON.stringify(user));
+      await user.save();
+      await redis.set(userId.toString(), JSON.stringify(user));
 
       res.status(200).json({
         success: true,
-        message:"profile image update successfully",
         user,
       });
-    }catch (error: any) { 
+    } catch (error: any) {
+      console.error("Error in updateProfilePicture:", error);
       return next(new ErrorHandler(error.message, 400));
-  }
-})
-
+    }
+  },
+);
 
 // get all users --- only for admin
 export const getAllUsers = catchAsyncError(
@@ -428,9 +419,8 @@ export const getAllUsers = catchAsyncError(
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
     }
-  }
+  },
 );
-
 
 // update user role --- only for admin
 export const updateUserRole = catchAsyncError(
@@ -440,7 +430,7 @@ export const updateUserRole = catchAsyncError(
       const isUserExist = await userModel.findOne({ email });
       if (isUserExist) {
         const id = isUserExist._id as any;
-        updateUserRoleService(res,id, role);
+        updateUserRoleService(res, id, role);
       } else {
         res.status(400).json({
           success: false,
@@ -450,7 +440,7 @@ export const updateUserRole = catchAsyncError(
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
     }
-  }
+  },
 );
 
 // Delete user --- only for admin
@@ -476,5 +466,5 @@ export const deleteUser = catchAsyncError(
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
     }
-  }
+  },
 );
