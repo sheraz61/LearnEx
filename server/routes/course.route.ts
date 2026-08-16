@@ -1,14 +1,15 @@
 import express from "express";
 
 import { authorizeRoles, isAuthenticated } from "../middleware/auth.js";
-import { addAnwser, addQuestion, addReplyToReview, addReview, deleteCourse, editCourse, getAllCourses, getCourseByUser, getSingleCourse, uploadCourse } from "../controllers/course.controller.js";
+import { addAnwser, addQuestion, addReplyToReview, addReview, deleteCourse, editCourse, generateVideoUrl, getAdminAllCourses, getAllCourses, getCourseByUser, getSingleCourse, uploadCourse } from "../controllers/course.controller.js";
+import { updateAccessToken } from "../controllers/user.controller.js";
 
 const router = express.Router();
 router.post(
   "/create-course",
   isAuthenticated,
   authorizeRoles("admin"),
-  uploadCourse,
+  uploadCourse
 );
 router.put(
   "/edit-course/:id",
@@ -51,13 +52,16 @@ router.put(
   addReplyToReview,
 );
 router.get(
-  "/get-courses",
+  "/get-admin-courses",
   isAuthenticated,
   authorizeRoles("admin"),
-  getAllCourses,
+  getAdminAllCourses,
 );
+
+router.post("/getVdoCipherOTP", generateVideoUrl);
+
 router.delete(
-  "/delete-course",
+  "/delete-course/:id",
   isAuthenticated,
   authorizeRoles("admin"),
   deleteCourse,

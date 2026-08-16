@@ -11,6 +11,7 @@ import ejs from "ejs";
 import { fileURLToPath } from "url";
 import sendMail from "../utils/sendMail.js";
 import NotificationModel from "../models/notification.model.js";
+import axios from "axios";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 // upload course
@@ -48,8 +49,10 @@ export const editCourse = catchAsyncError(
       }
       const courseData = (await CourseModel.findById(courseId)) as any;
 
-      if (thumbnail) {
-        await cloudinary.v2.uploader.destroy(courseData.thumbnail.public_id);
+      if (typeof thumbnail === "string" && thumbnail !== "" && !thumbnail.startsWith("https")) {
+        if (courseData.thumbnail?.public_id) {
+          await cloudinary.v2.uploader.destroy(courseData.thumbnail.public_id);
+        }
 
         const myCloud = await cloudinary.v2.uploader.upload(thumbnail, {
           folder: "coursesL",
@@ -59,9 +62,7 @@ export const editCourse = catchAsyncError(
           public_id: myCloud.public_id,
           url: myCloud.secure_url,
         };
-      }
-
-      if (thumbnail) {
+      } else if (typeof thumbnail === "string" && thumbnail.startsWith("https")) {
         data.thumbnail = {
           public_id: courseData?.thumbnail.public_id,
           url: courseData?.thumbnail.url,
@@ -496,6 +497,30 @@ export const deleteCourse = catchAsyncError(
         success: true,
         message: "course deleted successfully",
       });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 400));
+    }
+  }
+);
+
+
+// generate video url
+export const generateVideoUrl = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { videoId } = req.body;
+      const response = await axios.post(
+        `https://dev.vdocipher.com/api/videos/${videoId}/otp`,
+        { ttl: 300 },
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Apisecret ${process.env.VDOCIPHER_API_SECRET}`,
+          },
+        }
+      );
+      res.json(response.data);
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
     }

@@ -78,27 +78,34 @@ export const editLayout = catchAsyncError(
 
         const { image, title, subTitle } = req.body;
 
-        const data = image.startsWith("https")
-          ? bannerData
-          : await cloudinary.v2.uploader.upload(image, {
-              folder: "layoutL",
-            });
+        const data =
+          image && !image.startsWith("https")
+            ? await cloudinary.v2.uploader.upload(image, {
+                folder: "layoutL",
+              })
+            : bannerData;
 
         const banner = {
           type: "Banner",
           image: {
-            public_id: image.startsWith("https")
-              ? bannerData.banner.image.public_id
-              : data?.public_id,
-            url: image.startsWith("https")
-              ? bannerData.banner.image.url
-              : data?.secure_url,
+            public_id:
+              image && !image.startsWith("https")
+                ? data?.public_id
+                : bannerData?.banner?.image?.public_id,
+            url:
+              image && !image.startsWith("https")
+                ? data?.secure_url
+                : bannerData?.banner?.image?.url,
           },
           title,
           subTitle,
         };
 
-        await LayoutModel.findByIdAndUpdate(bannerData._id, { banner });
+        if (bannerData) {
+          await LayoutModel.findByIdAndUpdate(bannerData._id, { banner });
+        } else {
+          await LayoutModel.create({ type: "Banner", banner });
+        }
       }
 
       if (type === "FAQ") {
@@ -112,10 +119,17 @@ export const editLayout = catchAsyncError(
             };
           })
         );
-        await LayoutModel.findByIdAndUpdate(FaqItem?._id, {
-          type: "FAQ",
-          faq: faqItems,
-        });
+        if (FaqItem) {
+          await LayoutModel.findByIdAndUpdate(FaqItem._id, {
+            type: "FAQ",
+            faq: faqItems,
+          });
+        } else {
+          await LayoutModel.create({
+            type: "FAQ",
+            faq: faqItems,
+          });
+        }
       }
       if (type === "Categories") {
         const { categories } = req.body;
@@ -129,10 +143,17 @@ export const editLayout = catchAsyncError(
             };
           })
         );
-        await LayoutModel.findByIdAndUpdate(categoriesData?._id, {
-          type: "Categories",
-          categories: categoriesItems,
-        });
+        if (categoriesData) {
+          await LayoutModel.findByIdAndUpdate(categoriesData._id, {
+            type: "Categories",
+            categories: categoriesItems,
+          });
+        } else {
+          await LayoutModel.create({
+            type: "Categories",
+            categories: categoriesItems,
+          });
+        }
       }
 
       res.status(200).json({

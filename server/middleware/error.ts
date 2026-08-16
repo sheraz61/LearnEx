@@ -26,14 +26,14 @@ const errorMiddleware = (
   if (err.name === "JsonWebTokenError") {
     err = new ErrorHandler(
       "JSON Web Token is invalid. Try again",
-      400
+      401
     );
   }
 
   if (err.name === "TokenExpiredError") {
     err = new ErrorHandler(
       "JSON Web Token is expired. Try again",
-      400
+      401
     );
   }
 
