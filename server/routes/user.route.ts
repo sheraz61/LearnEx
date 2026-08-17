@@ -4,6 +4,7 @@ import {
   registerUser,
   activateUser,
   loginUser,
+  adminLogin,
   logoutUser,
   updateAccessToken,
   getUserInfo,
@@ -21,6 +22,7 @@ const router = express.Router();
 router.post("/registration", registerUser);
 router.post("/activate-user", activateUser);
 router.post("/login", loginUser);
+router.post("/admin-login", adminLogin);
 router.get("/logout", isAuthenticated, logoutUser);
 router.get("/refresh", updateAccessToken);
 router.get("/me", isAuthenticated, getUserInfo);

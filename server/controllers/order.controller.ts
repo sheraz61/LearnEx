@@ -11,8 +11,11 @@ import NotificationModel from "../models/notification.model.js";
 import { redis } from "../utils/redis.js";
 import { getAllOrdersService, newOrder } from "../services/order.service.js";
 import { fileURLToPath } from "url";
+import dotenv from 'dotenv'
+dotenv.config()
 
-
+import Stripe from "stripe";
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -22,6 +25,19 @@ export const createOrder = catchAsyncError(
       const { courseId, payment_info } = req.body as IOrder;
    
       const userId = req.user?._id;
+
+      if (payment_info) {
+        if ("id" in payment_info) {
+          const paymentIntentId = payment_info.id as string;
+          const paymentIntent = await stripe.paymentIntents.retrieve(
+            paymentIntentId
+          );
+
+          if (paymentIntent.status !== "succeeded") {
+            return next(new ErrorHandler("Payment not authorized!", 400));
+          }
+        }
+      }
       const user = await userModel.findById(userId);
 
       if (!user) {
@@ -97,6 +113,7 @@ export const createOrder = catchAsyncError(
       course.purchased = (course.purchased ?? 0) + 1;
       
       await course.save();
+      await redis.set(course._id.toString(), JSON.stringify(course), "EX", 604800);
       await newOrder(data, res, next);
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
@@ -110,6 +127,44 @@ export const getAllOrders = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       getAllOrdersService(res);
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
+
+
+//  send stripe publishble key
+export const sendStripePublishableKey = catchAsyncError(
+  async (req: Request, res: Response) => {
+    res.status(200).json({
+      publishablekey: process.env.STRIPE_PUBLISHABLE_KEY,
+    });
+  }
+);
+
+// new payment
+export const newPayment = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      if (!req.body.amount || isNaN(req.body.amount)) {
+        return next(new ErrorHandler("Valid amount is required", 400));
+      }
+      const myPayment = await stripe.paymentIntents.create({
+        amount: req.body.amount,
+        currency: "USD",
+        description: "E-learning course services",
+        metadata: {
+          company: "E-Learning",
+        },
+        automatic_payment_methods: {
+          enabled: true,
+        },
+      });
+      res.status(201).json({
+        success: true,
+        client_secret: myPayment.client_secret,
+      });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
     }
