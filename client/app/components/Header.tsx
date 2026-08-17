@@ -53,7 +53,7 @@ const Header: FC<Props> = ({ open, setOpen, activeItem, route, setRoute }) => {
             name: data?.user?.name,
             avatar: data.user?.image,
           });
-          // refetch();
+          refetch();
         }
       }
       if (data === null) {
@@ -209,7 +209,7 @@ const Header: FC<Props> = ({ open, setOpen, activeItem, route, setRoute }) => {
                   setRoute={setRoute}
                   activeItem={activeItem}
                   component={Login}
-                  // refetch={refetch}
+                  refetch={refetch}
                 />
               )}
             </>

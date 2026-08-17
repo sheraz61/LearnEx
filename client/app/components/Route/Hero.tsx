@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -10,10 +10,13 @@ import img1 from "../../../public/assets/banner-img-1.png";
 import client1 from "../../../public/assets/client-1.jpg";
 import client2 from "../../../public/assets/client-2.jpg";
 import client3 from "../../../public/assets/client-3.jpg";
+import { useGetHeroDataQuery } from "@/redux/features/layout/layoutApi";
 
 type Props = {};
 
 const Hero: FC<Props> = () => {
+      const { data, refetch } = useGetHeroDataQuery("Banner", {});
+
   const [search, setSearch] = useState("");
   const router = useRouter();
 
@@ -27,7 +30,7 @@ const Hero: FC<Props> = () => {
 
   return (
     <section className="relative w-full min-h-[calc(100vh-80px)] overflow-hidden bg-white transition-colors duration-300 dark:bg-slate-950">
-      
+
       {/* Background animation */}
       <div className="hero_animation absolute left-[-150px] top-[50px] z-0 h-[400px] w-[400px] rounded-full opacity-70 blur-[1px]" />
 
@@ -38,14 +41,20 @@ const Hero: FC<Props> = () => {
         <div className="flex w-full flex-col items-center text-center lg:w-[55%] lg:items-start lg:text-left">
 
           <h1 className="font-Poppins text-[38px] font-[600] leading-[1.2] text-black transition-colors duration-100 sm:text-[48px] md:text-[55px] lg:text-[60px] dark:text-white">
-            Learn from the
-            <span className="text-gradient block">best teachers</span>
+            {data?.layout?.banner?.title !== undefined ? (
+              data?.layout?.banner?.title
+            ) : (
+              <>
+                Learn from the
+                <span className="text-gradient block">best teachers</span>
+              </>
+            )}
           </h1>
 
           <p className="mt-6 max-w-[650px] font-Josefin text-[18px] font-[400] leading-[1.6] text-gray-600 transition-colors duration-100 sm:text-[20px] dark:text-gray-300">
-            Join LearnEx and get access to high-quality courses from
-            experienced instructors. Learn new skills and build your future
-            from anywhere.
+            {data?.layout?.banner?.subTitle !== undefined
+              ? data?.layout?.banner?.subTitle
+              : "Join LearnEx and get access to high-quality courses from experienced instructors. Learn new skills and build your future from anywhere."}
           </p>
 
           {/* Search */}
@@ -129,7 +138,7 @@ const Hero: FC<Props> = () => {
           <div className="absolute right-[5%] top-[5%] h-[280px] w-[280px] rounded-full bg-gradient-to-br from-[#5c5bd6]/40 to-transparent blur-[2px] transition-opacity duration-300 dark:from-[#37a39a]/30 dark:to-transparent sm:h-[350px] sm:w-[350px]" />
 
           <Image
-            src={img1}
+            src={data?.layout?.banner?.image?.url || img1}
             width={600}
             height={600}
             priority
