@@ -11,6 +11,8 @@ interface IComment extends Document {
   user: IUser;
   question: string;
   questionReplies: IReply[];
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 interface IReview extends Document {
@@ -18,6 +20,8 @@ interface IReview extends Document {
   rating: number;
   comment: string;
   commentReplies: IComment[];
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 interface ILink extends Document {
@@ -56,15 +60,18 @@ export interface ICourse extends Document {
   purchased?: number;
 }
 
-const reviewSchema = new Schema<IReview>({
-  user: Object,
-  rating: {
-    type: Number,
-    default: 0,
+const reviewSchema = new Schema<IReview>(
+  {
+    user: Object,
+    rating: {
+      type: Number,
+      default: 0,
+    },
+    comment: String,
+    commentReplies: [Object],
   },
-  comment: String,
-  commentReplies: [Object],
-});
+  { timestamps: true }
+);
 
 const linkSchema = new Schema<ILink>({
   title: String,
@@ -79,11 +86,14 @@ const replySchema = new Schema<IReply>(
   { timestamps: true },
 );
 
-const commentSchema = new Schema<IComment>({
-  user: Object,
-  question: String,
-  questionReplies: [replySchema],
-});
+const commentSchema = new Schema<IComment>(
+  {
+    user: Object,
+    question: String,
+    questionReplies: [replySchema],
+  },
+  { timestamps: true }
+);
 
 const courseDataSchema = new Schema<ICourseData>({
   videoUrl: String,

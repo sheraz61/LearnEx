@@ -225,6 +225,8 @@ export const addQuestion = catchAsyncError(
         user: req.user,
         question,
         questionReplies: [],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       };
 
       // add this question to our course content
@@ -374,6 +376,8 @@ export const addReview = catchAsyncError(
         user: req.user,
         rating,
         comment: review,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       };
 
       course?.reviews.push(reviewData);
