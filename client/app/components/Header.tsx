@@ -2,22 +2,25 @@
 
 import React, { FC, useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
+import { useSession } from "next-auth/react";
+import { HiOutlineMenuAlt3, HiOutlineUserCircle } from "react-icons/hi";
+import toast from "react-hot-toast";
+
 import NavItems from "../utils/NavItems";
 import { ThemeSwitcher } from "../utils/ThemeSwitcher";
-import { HiOutlineMenuAlt3, HiOutlineUserCircle } from "react-icons/hi";
 import CustomModal from "../utils/CustomModal";
 import Login from "../components/Auth/Login";
 import SignUp from "../components/Auth/SignUp";
 import Verification from "../components/Auth/Verification";
-import { useSession } from "next-auth/react";
+import Loader from "./Loader/Loader";
+
 import {
   useLogOutQuery,
   useSocialAuthMutation,
 } from "@/redux/features/auth/authApi";
-import toast from "react-hot-toast";
 import { useLoadUserQuery } from "@/redux/features/api/apiSlice";
-import Loader from "./Loader/Loader";
-import Image from "next/image";
+
 import avatar from "../../public/assets/avatar.png";
 
 type Props = {
@@ -28,51 +31,67 @@ type Props = {
   setRoute: (route: string) => void;
 };
 
-const Header: FC<Props> = ({ open, setOpen, activeItem, route, setRoute }) => {
-  const [active, setActive] = useState(false);
-  const [openSideBar, setOpenSidebar] = useState(false);
+const Header: FC<Props> = ({
+  open,
+  setOpen,
+  activeItem,
+  route,
+  setRoute,
+}) => {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [openSidebar, setOpenSidebar] = useState(false);
+  const [logout, setLogout] = useState(false);
+
   const {
     data: userData,
     isLoading,
     refetch,
   } = useLoadUserQuery(undefined, {});
 
-  const { data } = useSession();
+  const { data: session } = useSession();
+
   const [socialAuth, { isSuccess, error }] = useSocialAuthMutation();
-  const [logout, setLogout] = useState(false);
-  const {} = useLogOutQuery(undefined, {
-    skip: !logout ? true : false,
+
+  useLogOutQuery(undefined, {
+    skip: !logout,
   });
 
+  /* --------------------------------
+     Social authentication
+  --------------------------------- */
+
   useEffect(() => {
-    if (!isLoading) {
-      if (!userData) {
-        if (data) {
-          socialAuth({
-            email: data?.user?.email,
-            name: data?.user?.name,
-            avatar: data.user?.image,
-          });
-          refetch();
-        }
-      }
-      if (data === null) {
-        if (isSuccess) {
-          toast.success("Login Successfully");
-        }
-      }
-      if (data === null && !isLoading && !userData) {
-        setLogout(true);
-      }
+    if (isLoading) return;
+
+    if (!userData && session?.user) {
+      socialAuth({
+        email: session.user.email,
+        name: session.user.name,
+        avatar: session.user.image,
+      });
     }
-  }, [data, userData, isLoading]);
+
+    if (session === null && isSuccess) {
+      toast.success("Login successfully");
+      refetch();
+    }
+
+    if (session === null && !userData) {
+      setLogout(true);
+    }
+  }, [session, userData, isLoading, isSuccess]);
+
+  /* --------------------------------
+     Sticky header scroll state
+  --------------------------------- */
 
   useEffect(() => {
     const handleScroll = () => {
-      setActive(window.scrollY > 85);
+      setIsScrolled(window.scrollY > 20);
     };
 
     window.addEventListener("scroll", handleScroll);
+
     handleScroll();
 
     return () => {
@@ -80,170 +99,295 @@ const Header: FC<Props> = ({ open, setOpen, activeItem, route, setRoute }) => {
     };
   }, []);
 
-  const handleClose = (e: any) => {
-    if (e.target.id === "screen") {
-      {
-        setOpenSidebar(false);
-      }
+  /* --------------------------------
+     Close mobile sidebar
+  --------------------------------- */
+
+  const handleScreenClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
+      setOpenSidebar(false);
     }
   };
 
+  if (isLoading) {
+    return <Loader />;
+  }
+
   return (
     <>
-      {isLoading ? (
-        <Loader />
-      ) : (
-        <div className="w-full relative">
-          <div
-            className={`${
-              active
-                ? "fixed top-0 left-0 w-full h-20 z-50 border-b shadow-xl transition duration-500"
-                : "w-full h-20 border-b z-50"
-            } bg-white border-slate-200 text-black dark:bg-slate-950 dark:border-slate-700 dark:text-white`}
+      {/* ================= HEADER ================= */}
+
+      <header
+        className={`
+          fixed top-0 left-0 z-[999]
+          w-full
+          border-b
+          transition-all duration-300
+          ${isScrolled
+            ? "border-black/[0.08] bg-white/90 shadow-[0_4px_20px_rgba(0,0,0,0.05)] backdrop-blur-xl dark:border-white/[0.08] dark:bg-[#07070c]/90 dark:shadow-[0_4px_20px_rgba(0,0,0,0.2)]"
+            : "border-transparent bg-white/70 backdrop-blur-md dark:bg-[#07070c]/70"
+          }
+        `}
+      >
+        <div className="mx-auto flex h-[64px] w-[92%] max-w-[1400px] items-center justify-between">
+          {/* ================= LOGO ================= */}
+
+          <Link
+            href="/"
+            className="group flex items-center font-Poppins text-[22px] font-semibold tracking-[-0.04em] text-black dark:text-white"
           >
-            <div className="w-[95%] md:w-[92%] m-auto py-2 h-full">
-              <div className="w-full h-20 flex items-center justify-between p-3">
-                <div>
-                  <Link
-                    href="/"
-                    className="text-[25px] font-Poppins font-medium text-black dark:text-white"
-                  >
-                    LearnEx
-                  </Link>
-                </div>
-                <div className="flex items-center">
-                  <NavItems activeItem={activeItem} isMobile={false} />
+            Learn
+            <span className="hero-gradient-text transition-opacity duration-200 group-hover:opacity-80">
+              Ex
+            </span>
+          </Link>
 
-                  <ThemeSwitcher />
-                  {/* only for mobile */}
-                  <div className="md:hidden">
-                    <HiOutlineMenuAlt3
-                      size={25}
-                      className="cursor-pointer text-black dark:text-white"
-                      onClick={() => setOpenSidebar(true)}
-                    />
-                  </div>
+          {/* ================= DESKTOP NAV ================= */}
 
-                  {userData?.user ? (
-                    <Link href={"/profile"}>
-                      <Image
-                        src={
-                          userData?.user.avatar
-                            ? userData.user.avatar.url
-                            : avatar
-                        }
-                        alt=""
-                        width={30}
-                        height={30}
-                        className="hidden md:block w-[30px] h-[30px] rounded-full cursor-pointer"
-                        style={{
-                          border:
-                            activeItem === 5 ? "2px solid #37a39a" : "none",
-                        }}
-                      />
-                    </Link>
-                  ) : (
-                    <HiOutlineUserCircle
-                      size={25}
-                      className="hidden md:block cursor-pointer dark:text-white text-black"
-                      onClick={() => setOpen(true)}
-                    />
-                  )}
-                </div>
-              </div>
-            </div>
-            {/* mobile sidebar */}
-            {openSideBar && (
-              <div
-                className="fixed w-full h-screen top-0 left-0 z-50 bg-[#00000024]"
-                onClick={handleClose}
-                id="screen"
+          <div className="hidden items-center md:flex">
+            <NavItems
+              activeItem={activeItem}
+              isMobile={false}
+            />
+
+            <div className="mx-4 h-5 w-px bg-black/10 dark:bg-white/10" />
+
+            <ThemeSwitcher />
+
+            {/* Profile */}
+
+            {userData?.user ? (
+              <Link
+                href="/profile"
+                className="ml-4 flex items-center"
+                aria-label="Open profile"
               >
-                <div className="w-[70%] fixed z-50 h-screen bg-white top-0 right-0 dark:bg-slate-950 dark:bg-opacity-95">
-                  <NavItems activeItem={activeItem} isMobile={true} />
-
-                  {userData?.user ? (
-                    <Link href={"/profile"} className="py-5 px-1 flex items-center gap-3">
-                      <Image
-                        src={
-                          userData?.user.avatar
-                            ? userData.user.avatar.url
-                            : avatar
-                        }
-                        alt=""
-                        width={30}
-                        height={30}
-                        className="w-[30px] h-[30px] rounded-full ml-[20px] cursor-pointer"
-                        style={{
-                          border:
-                            activeItem === 5 ? "2px solid #37a39a" : "none",
-                        }}
-                      />
-                      <p className="text-[20px] font-Poppins font-medium text-black dark:text-white">{userData.user.name}</p>
-                    </Link>
-                  ) : (
-                    <button
-                      type="button"
-                      className="flex items-center gap-2 py-5 px-6 text-lg font-Poppins font-normal w-full text-black dark:text-white"
-                      onClick={() => setOpen(true)}
-                    >
-                      <HiOutlineUserCircle size={25} />
-                      <span>Profile</span>
-                    </button>
-                  )}
-
-                  <p className="text-base px-2 pl-5 text-black dark:text-white">
-                    Copyright © 2026 ELearning
-                  </p>
-                </div>
-              </div>
+                <Image
+                  src={
+                    userData.user.avatar?.url
+                      ? userData.user.avatar.url
+                      : avatar
+                  }
+                  alt="Profile"
+                  width={34}
+                  height={34}
+                  className="
+                    h-[34px] w-[34px]
+                    rounded-full
+                    object-cover
+                    border border-black/10
+                    dark:border-white/10
+                    transition-transform duration-200
+                    hover:scale-105
+                  "
+                />
+              </Link>
+            ) : (
+              <button
+                type="button"
+                aria-label="Open login"
+                onClick={() => {
+                  setRoute("Login");
+                  setOpen(true);
+                }}
+                className="
+                  ml-4
+                  flex items-center justify-center
+                  text-black dark:text-white
+                  transition-colors
+                  hover:text-[#7c5cff]
+                  dark:hover:text-[#a994ff]
+                "
+              >
+                <HiOutlineUserCircle size={26} />
+              </button>
             )}
           </div>
 
-          {route === "Login" && (
-            <>
-              {open && (
-                <CustomModal
-                  open={open}
-                  setOpen={setOpen}
-                  setRoute={setRoute}
-                  activeItem={activeItem}
-                  component={Login}
-                  refetch={refetch}
-                />
-              )}
-            </>
-          )}
+          {/* ================= MOBILE TRIGGER ================= */}
 
-          {route === "Sign-Up" && (
-            <>
-              {open && (
-                <CustomModal
-                  open={open}
-                  setOpen={setOpen}
-                  setRoute={setRoute}
-                  activeItem={activeItem}
-                  component={SignUp}
-                  // refetch={refetch}
-                />
-              )}
-            </>
-          )}
-          {route === "Verification" && (
-            <>
-              {open && (
-                <CustomModal
-                  open={open}
-                  setOpen={setOpen}
-                  setRoute={setRoute}
-                  activeItem={activeItem}
-                  component={Verification}
-                  // refetch={refetch}
-                />
-              )}
-            </>
-          )}
+          <div className="flex items-center gap-3 md:hidden">
+            <ThemeSwitcher />
+
+            <button
+              type="button"
+              aria-label="Open navigation"
+              onClick={() => setOpenSidebar(true)}
+              className="
+                flex h-9 w-9
+                items-center justify-center
+                text-black dark:text-white
+              "
+            >
+              <HiOutlineMenuAlt3 size={24} />
+            </button>
+          </div>
         </div>
+      </header>
+
+      {/* ================= MOBILE SIDEBAR ================= */}
+
+      {openSidebar && (
+        <div
+          id="mobile-menu"
+          onClick={handleScreenClick}
+          className="
+            fixed inset-0 z-[1000]
+            bg-black/30
+            backdrop-blur-[2px]
+          "
+        >
+          <aside
+            className="
+              absolute right-0 top-0
+              flex h-full
+              w-1/2
+              min-w-[260px]
+              flex-col
+              bg-white
+              shadow-[-10px_0_30px_rgba(0,0,0,0.08)]
+              dark:bg-[#0d0e16]
+              dark:shadow-[-10px_0_30px_rgba(124,92,255,0.1)]
+            "
+          >
+            {/* Sidebar Header — logo */}
+
+            <div className="flex h-[64px] shrink-0 items-center justify-between border-b border-black/[0.08] px-5 dark:border-white/[0.08]">
+              <Link
+                href="/"
+                onClick={() => setOpenSidebar(false)}
+                className="font-Poppins text-[21px] font-semibold text-black dark:text-white"
+              >
+                Learn
+                <span className="hero-gradient-text">Ex</span>
+              </Link>
+
+              <button
+                type="button"
+                onClick={() => setOpenSidebar(false)}
+                className="text-[26px] leading-none text-black/60 dark:text-white/60"
+                aria-label="Close navigation"
+              >
+                ×
+              </button>
+            </div>
+
+            {/* Nav items */}
+
+            <div className="flex-1 overflow-y-auto py-3">
+              <NavItems
+                activeItem={activeItem}
+                isMobile={true}
+                onClose={() => setOpenSidebar(false)}
+              />
+
+              <div className="mx-5 my-4 h-px bg-black/[0.08] dark:bg-white/[0.08]" />
+
+              {/* User / login */}
+
+              {userData?.user ? (
+                <Link
+                  href="/profile"
+                  onClick={() => setOpenSidebar(false)}
+                  className="
+                    mx-5
+                    flex items-center gap-3
+                    py-3
+                  "
+                >
+                  <Image
+                    src={
+                      userData.user.avatar?.url
+                        ? userData.user.avatar.url
+                        : avatar
+                    }
+                    alt="Profile"
+                    width={38}
+                    height={38}
+                    className="
+                      h-[38px] w-[38px]
+                      rounded-full
+                      object-cover
+                      border border-black/10
+                      dark:border-white/10
+                    "
+                  />
+
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-medium text-black dark:text-white">
+                      {userData.user.name}
+                    </p>
+
+                    <p className="text-xs text-black/50 dark:text-white/40">
+                      View profile
+                    </p>
+                  </div>
+                </Link>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setRoute("Login");
+                    setOpen(true);
+                    setOpenSidebar(false);
+                  }}
+                  className="
+                    mx-5
+                    flex items-center gap-3
+                    py-3
+                    text-black dark:text-white
+                  "
+                >
+                  <HiOutlineUserCircle size={25} />
+                  <span className="font-Poppins text-[16px]">
+                    Login
+                  </span>
+                </button>
+              )}
+            </div>
+
+            {/* Sidebar Footer */}
+
+            <div className="border-t border-black/[0.08] px-5 py-4 dark:border-white/[0.08]">
+              <p className="text-xs text-black/40 dark:text-white/30">
+                © 2026 LearnEx
+              </p>
+            </div>
+          </aside>
+        </div>
+      )}
+
+      {/* ================= AUTH MODAL ================= */}
+
+      {open && route === "Login" && (
+        <CustomModal
+          open={open}
+          setOpen={setOpen}
+          setRoute={setRoute}
+          activeItem={activeItem}
+          component={Login}
+          refetch={refetch}
+        />
+      )}
+
+      {open && route === "Sign-Up" && (
+        <CustomModal
+          open={open}
+          setOpen={setOpen}
+          setRoute={setRoute}
+          activeItem={activeItem}
+          component={SignUp}
+        />
+      )}
+
+      {open && route === "Verification" && (
+        <CustomModal
+          open={open}
+          setOpen={setOpen}
+          setRoute={setRoute}
+          activeItem={activeItem}
+          component={Verification}
+        />
       )}
     </>
   );

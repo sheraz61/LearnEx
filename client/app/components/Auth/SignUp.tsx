@@ -1,4 +1,5 @@
 "use client";
+
 import React, { FC, useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -8,7 +9,6 @@ import {
   AiFillGithub,
 } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
-import { styles } from "../../../app/styles/style";
 import { useRegisterMutation } from "@/redux/features/auth/authApi";
 import { toast } from "react-hot-toast";
 
@@ -21,135 +21,306 @@ const schema = Yup.object().shape({
   email: Yup.string()
     .email("Invalid email!")
     .required("Please enter your email!"),
-  password: Yup.string().required("Please enter your password!").min(6),
+  password: Yup.string()
+    .required("Please enter your password!")
+    .min(6),
 });
 
 const Signup: FC<Props> = ({ setRoute }) => {
   const [show, setShow] = useState(false);
-  const [register,{data,error,isSuccess}] = useRegisterMutation(); 
+
+  const [register, { data, error, isSuccess }] =
+    useRegisterMutation();
 
   useEffect(() => {
-   if(isSuccess){
+    if (isSuccess) {
       const message = data?.message || "Registration successful";
       toast.success(message);
       setRoute("Verification");
-   }
-   if(error){
-    if("data" in error){
-      const errorData = error as any;
-      toast.error(errorData.data.message);
     }
-   }
-  }, [isSuccess,error]);
-  
+
+    if (error) {
+      if ("data" in error) {
+        const errorData = error as any;
+        toast.error(errorData.data.message);
+      }
+    }
+  }, [isSuccess, error]);
 
   const formik = useFormik({
-    initialValues: { name: "", email: "", password: "" },
+    initialValues: {
+      name: "",
+      email: "",
+      password: "",
+    },
+
     validationSchema: schema,
-    onSubmit: async ({name, email, password }) => {
-      const data = {
-        name,email,password
-      };
-      await register(data);
+
+    onSubmit: async ({ name, email, password }) => {
+      await register({
+        name,
+        email,
+        password,
+      });
     },
   });
 
-  const { errors, touched, values, handleChange, handleSubmit } = formik;
+  const {
+    errors,
+    touched,
+    values,
+    handleChange,
+    handleSubmit,
+  } = formik;
 
   return (
     <div className="w-full">
-      <h1 className={`${styles.title}`}>Join to ELearning</h1>
+
+      {/* Heading */}
+      <div className="text-center ">
+        <h1 className="text-[22px] sm:text-[24px] font-Poppins font-semibold text-black dark:text-white">
+          Create your account
+        </h1>
+
+        <p className="text-[13px] mt-1 text-slate-500 dark:text-slate-400">
+          Start learning with LearnEx
+        </p>
+      </div>
+
       <form onSubmit={handleSubmit}>
-        <div className="mb-3">
-          <label className={`${styles.label}`} htmlFor="email">
-            Enter your Name
+
+        {/* Name */}
+        <div className="mb-3.5">
+          <label
+            className="block text-[13px] font-medium text-slate-700 dark:text-slate-300 mb-1.5"
+            htmlFor="name"
+          >
+            Full name
           </label>
+
           <input
             type="text"
-            name=""
+            name="name"
             value={values.name}
             onChange={handleChange}
             id="name"
-            placeholder="johndoe"
-            className={`${errors.name && touched.name && "border-red-500"} ${
-              styles.input
-            }`}
+            placeholder="John Doe"
+            className={`
+              w-full h-[40px]
+              px-3
+              rounded-lg
+              border
+              bg-slate-50 dark:bg-white/[0.03]
+              text-[13px]
+              text-black dark:text-white
+              placeholder:text-slate-400
+              outline-none
+              transition-all
+              focus:border-[#7c5cff]
+              focus:ring-2
+              focus:ring-[#7c5cff]/10
+              ${
+                errors.name && touched.name
+                  ? "border-red-500"
+                  : "border-slate-200 dark:border-white/10"
+              }
+            `}
           />
+
           {errors.name && touched.name && (
-            <span className="text-red-500 pt-2 block">{errors.name}</span>
+            <span className="text-red-500 text-[11px] mt-1 block">
+              {errors.name}
+            </span>
           )}
         </div>
-        <label className={`${styles.label}`} htmlFor="email">
-          Enter your Email
-        </label>
-        <input
-          type="email"
-          name=""
-          value={values.email}
-          onChange={handleChange}
-          id="email"
-          placeholder="loginmail@gmail.com"
-          className={`${errors.email && touched.email && "border-red-500"} ${
-            styles.input
-          }`}
-        />
-        {errors.email && touched.email && (
-          <span className="text-red-500 pt-2 block">{errors.email}</span>
-        )}
-        <div className="w-full mt-5 relative mb-1">
-          <label className={`${styles.label}`} htmlFor="email">
-            Enter your password
+
+        {/* Email */}
+        <div className="mb-3.5">
+          <label
+            className="block text-[13px] font-medium text-slate-700 dark:text-slate-300 mb-1.5"
+            htmlFor="email"
+          >
+            Email address
           </label>
+
           <input
-            type={!show ? "password" : "text"}
-            name="password"
-            value={values.password}
+            type="email"
+            name="email"
+            value={values.email}
             onChange={handleChange}
-            id="password"
-            placeholder="password!@%"
-            className={`${
-              errors.password && touched.password && "border-red-500"
-            } ${styles.input}`}
+            id="email"
+            placeholder="you@example.com"
+            className={`
+              w-full h-[40px]
+              px-3
+              rounded-lg
+              border
+              bg-slate-50 dark:bg-white/[0.03]
+              text-[13px]
+              text-black dark:text-white
+              placeholder:text-slate-400
+              outline-none
+              transition-all
+              focus:border-[#7c5cff]
+              focus:ring-2
+              focus:ring-[#7c5cff]/10
+              ${
+                errors.email && touched.email
+                  ? "border-red-500"
+                  : "border-slate-200 dark:border-white/10"
+              }
+            `}
           />
-          {!show ? (
-            <AiOutlineEyeInvisible
-              className="absolute bottom-3 right-2 z-1 cursor-pointer"
-              size={20}
-              onClick={() => setShow(true)}
-            />
-          ) : (
-            <AiOutlineEye
-              className="absolute bottom-3 right-2 z-1 cursor-pointer"
-              size={20}
-              onClick={() => setShow(false)}
-            />
+
+          {errors.email && touched.email && (
+            <span className="text-red-500 text-[11px] mt-1 block">
+              {errors.email}
+            </span>
           )}
         </div>
-        {errors.password && touched.password && (
-          <span className="text-red-500 pt-2 block">{errors.password}</span>
-        )}
-        <div className="w-full mt-5">
-          <input type="submit" value="Sign Up" className={`${styles.button}`} />
+
+        {/* Password */}
+        <div className="mb-4">
+          <label
+            className="block text-[13px] font-medium text-slate-700 dark:text-slate-300 mb-1.5"
+            htmlFor="password"
+          >
+            Password
+          </label>
+
+          <div className="relative">
+
+            <input
+              type={!show ? "password" : "text"}
+              name="password"
+              value={values.password}
+              onChange={handleChange}
+              id="password"
+              placeholder="••••••••"
+              className={`
+                w-full h-[40px]
+                px-3 pr-10
+                rounded-lg
+                border
+                bg-slate-50 dark:bg-white/[0.03]
+                text-[13px]
+                text-black dark:text-white
+                placeholder:text-slate-400
+                outline-none
+                transition-all
+                focus:border-[#7c5cff]
+                focus:ring-2
+                focus:ring-[#7c5cff]/10
+                ${
+                  errors.password && touched.password
+                    ? "border-red-500"
+                    : "border-slate-200 dark:border-white/10"
+                }
+              `}
+            />
+
+            {!show ? (
+              <AiOutlineEyeInvisible
+                className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-slate-400 hover:text-[#7c5cff]"
+                size={18}
+                onClick={() => setShow(true)}
+              />
+            ) : (
+              <AiOutlineEye
+                className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-slate-400 hover:text-[#7c5cff]"
+                size={18}
+                onClick={() => setShow(false)}
+              />
+            )}
+
+          </div>
+
+          {errors.password && touched.password && (
+            <span className="text-red-500 text-[11px] mt-1 block">
+              {errors.password}
+            </span>
+          )}
         </div>
-        <br />
-        <h5 className="text-center pt-4 font-Poppins text-[14px] text-black dark:text-white">
-          Or join with
-        </h5>
-        <div className="flex items-center justify-center my-3">
-          <FcGoogle size={30} className="cursor-pointer mr-2" />
-          <AiFillGithub size={30} className="cursor-pointer ml-2" />
+
+        {/* Submit */}
+        <button
+          type="submit"
+          className="
+            w-full h-[40px]
+            rounded-lg
+            text-[13px]
+            font-semibold
+            text-white
+            bg-gradient-to-r
+            from-[#7c5cff]
+            to-[#a66cff]
+            shadow-[0_8px_25px_-10px_rgba(124,92,255,0.7)]
+            hover:-translate-y-[1px]
+            transition-all
+          "
+        >
+          Create Account
+        </button>
+
+        {/* Divider */}
+        <div className="flex items-center gap-3 my-4">
+          <div className="h-px flex-1 bg-slate-200 dark:bg-white/10" />
+
+          <span className="text-[10px] text-slate-400">
+            OR
+          </span>
+
+          <div className="h-px flex-1 bg-slate-200 dark:bg-white/10" />
         </div>
-        <h5 className="text-center pt-4 font-Poppins text-[14px]">
-          Already have an account?{" "}
-          <span
-            className="text-[#2190ff] pl-1 cursor-pointer"
+
+        {/* Social */}
+        <div className="flex justify-center gap-3">
+
+          <button
+            type="button"
+            className="
+              w-[44px] h-[38px]
+              flex items-center justify-center
+              rounded-lg
+              border border-slate-200 dark:border-white/10
+              bg-slate-50 dark:bg-white/[0.03]
+            "
+          >
+            <FcGoogle size={20} />
+          </button>
+
+          <button
+            type="button"
+            className="
+              w-[44px] h-[38px]
+              flex items-center justify-center
+              rounded-lg
+              border border-slate-200 dark:border-white/10
+              bg-slate-50 dark:bg-white/[0.03]
+            "
+          >
+            <AiFillGithub
+              size={20}
+              className="text-black dark:text-white"
+            />
+          </button>
+
+        </div>
+
+        {/* Login */}
+        <p className="text-center text-[12px] mt-4 text-slate-500 dark:text-slate-400">
+          Already have an account?
+
+          <button
+            type="button"
+            className="ml-1 text-[#7c5cff] font-medium"
             onClick={() => setRoute("Login")}
           >
             Sign in
-          </span>
-        </h5>
+          </button>
+        </p>
+
       </form>
-      <br />
     </div>
   );
 };
