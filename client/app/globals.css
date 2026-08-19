@@ -204,3 +204,9 @@ button {
 .dark .hero-glass {
   background: rgba(13, 14, 22, 0.55);
 }
+
+/* Fix Stripe Elements injecting LLM instructions onto the screen */
+.visually-hidden,
+[data-instructional-text] {
+  display: none !important;
+}
