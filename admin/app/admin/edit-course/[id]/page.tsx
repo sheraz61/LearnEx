@@ -26,25 +26,14 @@ const Page = ({ params }: Props) => {
   }
 
   return (
-    <div>
+    <>
       <Heading
         title="LearnEx - Admin"
         description="LearnEx is a platform for students to learn and get help from teachers"
         keywords="Programming, MERN, Redux, Machine Learning"
       />
-
-      <div className="flex">
-        <div className="1500px:w-[16%] w-1/5">
-          <AdminSidebar />
-        </div>
-
-        <div className="w-[85%]">
-          <DashboardHeader />
-
-          <EditCourse id={id} />
-        </div>
-      </div>
-    </div>
+      <EditCourse id={id} />
+    </>
   );
 };
 
