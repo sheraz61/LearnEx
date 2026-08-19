@@ -1,93 +1,163 @@
-import { styles } from "@/app/styles/style";
-import { useUpdatePasswordMutation } from "../../../redux/features/user/userApi";
+"use client";
+
 import React, { FC, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
+import { FiEye, FiEyeOff } from "react-icons/fi";
+import { useUpdatePasswordMutation } from "../../../redux/features/user/userApi";
 
 type Props = {};
 
-const ChangePassword: FC<Props> = (props) => {
+const ChangePassword: FC<Props> = () => {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [updatePassword, { isSuccess, error }] = useUpdatePasswordMutation();
 
-  const passwordChangeHandler = async (e: any) => {
+  const [showOld, setShowOld] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+
+  const [
+    updatePassword,
+    { isSuccess, error, isLoading },
+  ] = useUpdatePasswordMutation();
+
+  const passwordChangeHandler = async (
+    e: React.FormEvent
+  ) => {
     e.preventDefault();
+
     if (newPassword !== confirmPassword) {
       toast.error("Passwords do not match");
-    } else {
-      await updatePassword({ oldPassword, newPassword });
+      return;
     }
+
+    await updatePassword({
+      oldPassword,
+      newPassword,
+    });
   };
 
   useEffect(() => {
     if (isSuccess) {
       toast.success("Password changed successfully");
+
+      setOldPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
     }
-    if (error) {
-      if ("data" in error) {
-        const errorData = error as any;
-        toast.error(errorData.data.message);
-      }
+
+    if (error && "data" in error) {
+      const errorData = error as any;
+      toast.error(errorData.data.message);
     }
   }, [isSuccess, error]);
 
+  const fields = [
+    {
+      id: "old-password",
+      label: "Current password",
+      value: oldPassword,
+      set: setOldPassword,
+      show: showOld,
+      setShow: setShowOld,
+    },
+    {
+      id: "new-password",
+      label: "New password",
+      value: newPassword,
+      set: setNewPassword,
+      show: showNew,
+      setShow: setShowNew,
+    },
+    {
+      id: "confirm-password",
+      label: "Confirm new password",
+      value: confirmPassword,
+      set: setConfirmPassword,
+      show: showConfirm,
+      setShow: setShowConfirm,
+    },
+  ];
+
   return (
-    <div className="w-full pl-7 px-2 800px:px-5 800px:pl-0">
-      <h1 className="block text-[25px] 800px:text-[30px] font-Poppins text-center font-[500] text-black dark:text-[#fff] pb-2">
-        Change Password
-      </h1>
-      <div className="w-full">
-        <form
-          aria-required
-          onSubmit={passwordChangeHandler}
-          className="flex flex-col items-center"
-        >
-          <div className=" w-[100%] 800px:w-[60%] mt-5">
-            <label className="block pb-2 text-black dark:text-[#fff]">
-              Enter your old password
+    <form
+      onSubmit={passwordChangeHandler}
+      className="w-full max-w-md"
+    >
+      <div className="space-y-6">
+        {fields.map((field) => (
+          <div key={field.id}>
+            <label
+              htmlFor={field.id}
+              className="mb-2 block font-Poppins text-sm font-medium text-black dark:text-white"
+            >
+              {field.label}
             </label>
-            <input
-              type="password"
-              className={`${styles.input} !w-[95%] mb-4 800px:mb-0 text-black dark:text-[#fff]`}
-              required
-              value={oldPassword}
-              onChange={(e) => setOldPassword(e.target.value)}
-            />
+
+            <div className="relative">
+              <input
+                id={field.id}
+                type={field.show ? "text" : "password"}
+                required
+                value={field.value}
+                onChange={(e) => field.set(e.target.value)}
+                className="
+                  h-10
+                  w-full
+                  rounded-md
+                  border
+                  border-gray-200
+                  bg-transparent
+                  px-3
+                  pr-10
+                  font-Josefin
+                  text-[15px]
+                  text-black
+                  outline-none
+                  transition-colors
+                  focus:border-[#7c5cff]
+                  dark:border-white/10
+                  dark:text-white
+                  dark:focus:border-[#7c5cff]
+                "
+              />
+
+              <button
+                type="button"
+                onClick={() => field.setShow(!field.show)}
+                tabIndex={-1}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+              >
+                {field.show ? <FiEyeOff size={16} /> : <FiEye size={16} />}
+              </button>
+            </div>
           </div>
-          <div className=" w-[100%] 800px:w-[60%] mt-2">
-            <label className="block pb-2 text-black dark:text-[#fff]">
-              Enter your new password
-            </label>
-            <input
-              type="password"
-              className={`${styles.input} !w-[95%] mb-4 800px:mb-0 text-black dark:text-[#fff]`}
-              required
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-            />
-          </div>
-          <div className=" w-[100%] 800px:w-[60%] mt-2">
-            <label className="block pb-2 text-black dark:text-[#fff]">
-              Enter your confirm password
-            </label>
-            <input
-              type="password"
-              className={`${styles.input} !w-[95%] mb-4 800px:mb-0 text-black dark:text-[#fff]`}
-              required
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-            />
-            <input
-              className={`w-[95%] h-[40px] border border-[#37a39a] text-center text-black dark:text-[#fff] rounded-[3px] mt-8 cursor-pointer`}
-              required
-              value="Update"
-              type="submit"
-            />
-          </div>
-        </form>
+        ))}
+
+        <div className="pt-2">
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="
+              rounded-md
+              bg-[#7c5cff]
+              px-5
+              py-2
+              font-Poppins
+              text-[14px]
+              font-[500]
+              text-white
+              transition-colors
+              hover:bg-[#6f51e8]
+              disabled:cursor-not-allowed
+              disabled:opacity-60
+            "
+          >
+            {isLoading ? "Updating..." : "Update password"}
+          </button>
+        </div>
       </div>
-    </div>
+    </form>
   );
 };
 

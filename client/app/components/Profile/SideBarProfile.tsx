@@ -3,9 +3,7 @@ import React, { FC } from "react";
 import avatarDefault from "../../../public/assets/avatar.png";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { SiCoursera } from "react-icons/si";
-import { AiOutlineLogout } from "react-icons/ai";
-import { MdOutlineAdminPanelSettings } from "react-icons/md";
-import Link from "next/link";
+import { AiOutlineLogout, AiOutlineUser } from "react-icons/ai";
 
 type Props = {
   user: any;
@@ -22,67 +20,105 @@ const SideBarProfile: FC<Props> = ({
   setActive,
   logOutHandler,
 }) => {
+  const profileImage =
+    user?.avatar?.url || avatar || avatarDefault;
+
+  const menuItems = [
+    {
+      id: 1,
+      label: "My Account",
+      icon: <AiOutlineUser size={17} />,
+    },
+    {
+      id: 2,
+      label: "Change Password",
+      icon: <RiLockPasswordLine size={17} />,
+    },
+    {
+      id: 3,
+      label: "Enrolled Courses",
+      icon: <SiCoursera size={16} />,
+    },
+  ];
+
   return (
     <div className="w-full">
-      <div
-        className={`w-full flex items-center px-3 py-4 cursor-pointer ${active === 1 ? "dark:bg-slate-800 bg-white" : "bg-transparent"
-          }`}
-        onClick={() => setActive(1)}
-      >
+      {/* User */}
+      <div className="mb-6 flex items-center gap-3">
         <Image
-          src={
-            user.avatar || avatar ? user.avatar.url || avatar : avatarDefault
-          }
-          alt=""
-          width={20}
-          height={20}
-          className="w-[20px] h-[20px] md:w-[30px] md:h-[30px] cursor-pointer rounded-full"
+          src={profileImage}
+          alt="Profile"
+          width={44}
+          height={44}
+          className="h-11 w-11 rounded-full object-cover ring-1 ring-black/10 dark:ring-white/10"
         />
-        <h5 className="pl-2 md:block hidden font-Poppins dark:text-white text-black">
-          My Account
-        </h5>
+
+        <div className="min-w-0">
+          <p className="truncate font-Poppins text-sm font-semibold text-black dark:text-white">
+            {user?.name}
+          </p>
+
+          <p className="mt-0.5 truncate font-Josefin text-xs text-gray-500 dark:text-gray-400">
+            {user?.email}
+          </p>
+        </div>
       </div>
-      <div
-        className={`w-full flex items-center px-3 py-4 cursor-pointer ${active === 2 ? "dark:bg-slate-800 bg-white" : "bg-transparent"
-          }`}
-        onClick={() => setActive(2)}
-      >
-        <RiLockPasswordLine size={20} className="dark:text-white text-black" />
-        <h5 className="pl-2 md:block hidden font-Poppins dark:text-white text-black">
-          Change Password
-        </h5>
-      </div>
-      <div
-        className={`w-full flex items-center px-3 py-4 cursor-pointer ${active === 3 ? "dark:bg-slate-800 bg-white" : "bg-transparent"
-          }`}
-        onClick={() => setActive(3)}
-      >
-        <SiCoursera size={20} className="dark:text-white text-black" />
-        <h5 className="pl-2 md:block hidden font-Poppins dark:text-white text-black">
-          Enrolled Courses
-        </h5>
-      </div>
-      {user.role === "admin" && (
-        <Link
-          className={`w-full flex items-center px-3 py-4 cursor-pointer ${active === 6 ? "dark:bg-slate-800 bg-white" : "bg-transparent"
-            }`}
-          href={"/admin"}
+
+      {/* Navigation */}
+      <nav>
+        <div className="space-y-0.5">
+          {menuItems.map((item) => {
+            const isActive = active === item.id;
+
+            return (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => setActive(item.id)}
+                className={`
+                  flex w-full items-center gap-2.5
+                  rounded-md
+                  px-3 py-2
+                  text-left
+                  font-Poppins text-[14px]
+                  transition-colors duration-150
+                  ${
+                    isActive
+                      ? "bg-[#7c5cff]/10 text-[#7c5cff] dark:bg-[#7c5cff]/15 dark:text-[#a994ff]"
+                      : "text-gray-600 hover:bg-gray-100 hover:text-black dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white"
+                  }
+                `}
+              >
+                <span className={isActive ? "text-[#7c5cff]" : "text-gray-400 dark:text-gray-500"}>
+                  {item.icon}
+                </span>
+                {item.label}
+              </button>
+            );
+          })}
+        </div>
+      </nav>
+
+      {/* Logout */}
+      <div className="mt-6 border-t border-gray-200 pt-4 dark:border-white/10">
+        <button
+          type="button"
+          onClick={logOutHandler}
+          className="
+            flex w-full items-center gap-2.5
+            rounded-md
+            px-3 py-2
+            font-Poppins text-[14px]
+            text-gray-500
+            transition-colors
+            hover:bg-red-50 hover:text-red-500
+            dark:text-gray-400
+            dark:hover:bg-red-500/10 dark:hover:text-red-400
+          "
         >
-          <MdOutlineAdminPanelSettings size={20} className="dark:text-white text-black" />
-          <h5 className="pl-2 md:block hidden font-Poppins dark:text-white text-black">
-            Admin Dashboard
-          </h5>
-        </Link>
-      )}
-      <div
-        className={`w-full flex items-center px-3 py-4 cursor-pointer ${active === 4 ? "dark:bg-slate-800 bg-white" : "bg-transparent"
-          }`}
-        onClick={() => logOutHandler()}
-      >
-        <AiOutlineLogout size={20} className="dark:text-white text-black" />
-        <h5 className="pl-2 md:block hidden font-Poppins dark:text-white text-black">
+          <AiOutlineLogout size={17} />
           Log Out
-        </h5>
+        </button>
       </div>
     </div>
   );
