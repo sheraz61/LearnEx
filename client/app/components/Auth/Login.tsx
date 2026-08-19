@@ -115,10 +115,9 @@ const Login: FC<Props> = ({ setRoute, setOpen, refetch }) => {
               focus:border-[#7c5cff]
               focus:ring-2
               focus:ring-[#7c5cff]/10
-              ${
-                errors.email && touched.email
-                  ? "border-red-500"
-                  : "border-slate-200 dark:border-white/10"
+              ${errors.email && touched.email
+                ? "border-red-500"
+                : "border-slate-200 dark:border-white/10"
               }
             `}
           />
@@ -161,10 +160,9 @@ const Login: FC<Props> = ({ setRoute, setOpen, refetch }) => {
                 focus:border-[#7c5cff]
                 focus:ring-2
                 focus:ring-[#7c5cff]/10
-                ${
-                  errors.password && touched.password
-                    ? "border-red-500"
-                    : "border-slate-200 dark:border-white/10"
+                ${errors.password && touched.password
+                  ? "border-red-500"
+                  : "border-slate-200 dark:border-white/10"
                 }
               `}
             />

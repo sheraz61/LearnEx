@@ -32,6 +32,10 @@ body {
   color: var(--foreground);
 }
 
+button {
+  cursor: pointer;
+}
+
 .hero_animation {
   background-image: linear-gradient(
     147.92deg,
