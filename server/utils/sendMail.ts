@@ -1,10 +1,9 @@
-import nodemailer, { Transporter } from "nodemailer";
-import dotenv from 'dotenv'
+import dotenv from 'dotenv';
 import ejs from "ejs";
 import path from "path";
 import { fileURLToPath } from "url";
 
-dotenv.config()
+dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -19,29 +18,42 @@ interface EmailOptions {
 }
 
 const sendMail = async (options: EmailOptions): Promise<void> => {
-  const transporter: Transporter = nodemailer.createTransport({
-    host: process.env.SMPT_HOST,
-    port: parseInt(process.env.SMPT_PORT || '587'),
-    service: process.env.SMPT_SERVICE,
-    auth: {
-      user: process.env.SMPT_MAIL,
-      pass: process.env.SMPT_PASSWORD,
-    },
-  });
   const { email, subject, template, data } = options;
-  //get the path to the email template file
+
+  // Get the path to the email template file
   const templatePath = path.join(__dirname, "../mails", template);
 
-  // render the email template with ejs
-  const html: string = await ejs.renderFile(templatePath, data);
+  // Render the email template with ejs
+  const htmlContent: string = await ejs.renderFile(templatePath, data);
 
-  const mailOptions = {
-    from: process.env.SMPT_MAIL,
-    to: email,
-    subject,
-    html,
-  };
-  await transporter.sendMail(mailOptions);
+  // Send via Brevo HTTP API
+  const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+    method: "POST",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+      "api-key": process.env.BREVO_API_KEY as string,
+    },
+    body: JSON.stringify({
+      sender: {
+        name: "LearnEx",
+        email: process.env.BREVO_SENDER_EMAIL,
+      },
+      to: [
+        {
+          email: email,
+        },
+      ],
+      subject: subject,
+      htmlContent: htmlContent,
+    }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    console.error("Brevo API Error:", errorData);
+    throw new Error(`Failed to send email: ${errorData.message || response.statusText}`);
+  }
 };
 
 export default sendMail;
