@@ -87,60 +87,69 @@ const EditCategories = (props: Props) => {
       {isLoading ? (
         <Loader />
       ) : (
-        <div className="mt-[120px] text-center">
-          <h1 className={`${styles.title}`}>All Categories</h1>
-          {categories &&
-            categories.map((item: any, index: number) => {
-              return (
-                <div className="p-3" key={index}>
-                  <div className="flex items-center w-full justify-center">
+        <div className="w-full mt-0 hero-glass dark:bg-[#111C43]/60 bg-white/80 border border-slate-200 dark:border-white/10 shadow-lg p-8 rounded-xl max-w-[800px] mx-auto">
+          <h1 className={`${styles.title} !text-[24px] font-semibold text-slate-800 dark:text-white mb-6 text-center`}>
+            Edit Categories
+          </h1>
+          <div className="space-y-4">
+            {categories &&
+              categories.map((item: any, index: number) => {
+                return (
+                  <div className="flex items-center w-full gap-4 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-200 dark:border-white/10 transition-colors hover:border-slate-300 dark:hover:border-white/20" key={index}>
                     <input
-                      className={`${styles.input} !w-[unset] !border-none !text-[20px]`}
+                      className="flex-1 bg-transparent outline-none font-Poppins text-[16px] text-slate-800 dark:text-white placeholder:text-slate-400"
                       value={item.title}
                       onChange={(e) =>
                         handleCategoriesAdd(item._id, e.target.value)
                       }
                       placeholder="Enter category title..."
                     />
-                    <AiOutlineDelete
-                      className="dark:text-white text-black text-[18px] cursor-pointer"
+                    <button 
+                      className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-500/10 rounded-full transition-colors"
                       onClick={() => {
                         setCategories((prevCategory: any) =>
                           prevCategory.filter((i: any) => i._id !== item._id)
                         );
                       }}
-                    />
+                    >
+                      <AiOutlineDelete className="text-[20px]" />
+                    </button>
                   </div>
-                </div>
-              );
-            })}
-          <br />
-          <br />
-          <div className="w-full flex justify-center">
-            <IoMdAddCircleOutline
-              className="dark:text-white text-black text-[25px] cursor-pointer"
-              onClick={newCategoriesHandler}
-            />
+                );
+              })}
           </div>
-          <div
-            className={`${
-              styles.button
-            } !w-[100px] !min-h-[40px] !h-[40px] dark:text-white text-black bg-[#cccccc34] 
-            ${
-              areCategoriesUnchanged(data.layout?.categories, categories) ||
-              isAnyCategoryTitleEmpty(categories)
-                ? "!cursor-not-allowed"
-                : "!cursor-pointer !bg-[#42d383]"
-            }
-            !rounded absolute bottom-12 right-12`}
-            onClick={
-              areCategoriesUnchanged(data.layout?.categories, categories) ||
-              isAnyCategoryTitleEmpty(categories)
-                ? () => null
-                : editCategoriesHandler
-            }
-          >
-            Save
+          
+          <div className="w-full flex justify-center mt-6">
+            <button
+              className="flex items-center gap-2 px-4 py-2 rounded-lg text-[var(--hero-accent)] bg-[var(--hero-accent)]/10 hover:bg-[var(--hero-accent)]/20 transition-colors font-Poppins font-medium"
+              onClick={newCategoriesHandler}
+            >
+              <IoMdAddCircleOutline className="text-[20px]" />
+              Add Category
+            </button>
+          </div>
+
+          <div className="mt-8 flex justify-end">
+            <button
+              className={`
+                px-6 py-2.5 rounded-lg font-Poppins font-medium transition-all shadow-md
+                ${
+                  areCategoriesUnchanged(data.layout?.categories, categories) ||
+                  isAnyCategoryTitleEmpty(categories)
+                    ? "bg-slate-200 dark:bg-slate-700 text-slate-400 cursor-not-allowed shadow-none"
+                    : "bg-[#45CBA0] hover:bg-[#3ba885] text-white hover:shadow-lg hover:-translate-y-0.5"
+                }
+              `}
+              disabled={areCategoriesUnchanged(data.layout?.categories, categories) || isAnyCategoryTitleEmpty(categories)}
+              onClick={
+                areCategoriesUnchanged(data.layout?.categories, categories) ||
+                isAnyCategoryTitleEmpty(categories)
+                  ? () => null
+                  : editCategoriesHandler
+              }
+            >
+              Save Changes
+            </button>
           </div>
         </div>
       )}

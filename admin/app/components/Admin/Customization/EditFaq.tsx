@@ -98,22 +98,21 @@ const EditFaq = (props: Props) => {
         isLoading ? (
           <Loader />
         ) : (
-          <div className="w-[90%] 800px:w-[80%] m-auto mt-[120px]">
-            <div className="mt-12">
-              <dl className="space-y-8">
+          <div className="w-full mt-0 hero-glass dark:bg-[#111C43]/60 bg-white/80 border border-slate-200 dark:border-white/10 shadow-lg p-8 rounded-xl max-w-[800px] mx-auto mb-[100px]">
+            <h1 className={`${styles.title} !text-[24px] font-semibold text-slate-800 dark:text-white mb-6 text-center`}>
+              Edit FAQ
+            </h1>
+            <div className="space-y-4">
+              <dl className="space-y-4">
                 {questions?.map((q: any) => (
                   <div
                     key={q._id}
-                    className={`${q._id !== questions[0]?._id && "border-t"
-                      } border-gray-200 pt-6`}
+                    className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg border border-slate-200 dark:border-white/10 transition-colors hover:border-slate-300 dark:hover:border-white/20"
                   >
                     <dt className="text-lg">
-                      <button
-                        className="flex items-start dark:text-white text-black justify-between w-full text-left focus:outline-none"
-                        onClick={() => toggleQuestion(q._id)}
-                      >
+                      <div className="flex items-start justify-between w-full">
                         <input
-                          className={`${styles.input} border-none`}
+                          className="flex-1 bg-transparent outline-none font-Poppins text-[16px] font-medium text-slate-800 dark:text-white placeholder:text-slate-400"
                           value={q.question}
                           onChange={(e: any) =>
                             handleQuestionChange(q._id, e.target.value)
@@ -121,65 +120,76 @@ const EditFaq = (props: Props) => {
                           placeholder={"Add your question..."}
                         />
 
-                        <span className="ml-6 flex-shrink-0">
+                        <button
+                          className="ml-4 p-2 text-slate-500 hover:text-[var(--hero-accent)] hover:bg-[var(--hero-accent)]/10 rounded-full transition-colors flex-shrink-0"
+                          onClick={() => toggleQuestion(q._id)}
+                        >
                           {q.active ? (
-                            <HiMinus className="h-6 w-6" />
+                            <HiMinus className="h-5 w-5" />
                           ) : (
-                            <HiPlus className="h-6 w-6" />
+                            <HiPlus className="h-5 w-5" />
                           )}
-                        </span>
-                      </button>
+                        </button>
+                      </div>
                     </dt>
                     {q.active && (
-                      <dd className="mt-2 pr-12">
-                        <input
-                          className={`${styles.input} border-none`}
+                      <dd className="mt-4 pt-4 border-t border-slate-200 dark:border-white/10 flex items-start gap-4">
+                        <textarea
+                          className="flex-1 bg-transparent outline-none font-Poppins text-[14px] text-slate-600 dark:text-slate-300 placeholder:text-slate-400 resize-none min-h-[80px]"
                           value={q.answer}
                           onChange={(e: any) =>
                             handleAnswerChange(q._id, e.target.value)
                           }
                           placeholder={"Add your answer..."}
                         />
-                        <span className="ml-6 flex-shrink-0">
-                          <AiOutlineDelete
-                            className="dark:text-white text-black text-[18px] cursor-pointer"
-                            onClick={() => {
-                              setQuestions((prevQuestions) =>
-                                prevQuestions.filter((item) => item._id !== q._id)
-                              );
-                            }}
-                          />
-                        </span>
+                        <button
+                          className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-500/10 rounded-full transition-colors flex-shrink-0"
+                          onClick={() => {
+                            setQuestions((prevQuestions) =>
+                              prevQuestions.filter((item) => item._id !== q._id)
+                            );
+                          }}
+                        >
+                          <AiOutlineDelete className="text-[20px]" />
+                        </button>
                       </dd>
                     )}
                   </div>
                 ))}
               </dl>
-              <br />
-              <br />
-              <IoMdAddCircleOutline
-                className="dark:text-white text-black text-[25px] cursor-pointer"
-                onClick={newFaqHandler}
-              />
+              
+              <div className="w-full flex justify-center mt-6">
+                <button
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg text-[var(--hero-accent)] bg-[var(--hero-accent)]/10 hover:bg-[var(--hero-accent)]/20 transition-colors font-Poppins font-medium"
+                  onClick={newFaqHandler}
+                >
+                  <IoMdAddCircleOutline className="text-[20px]" />
+                  Add Question
+                </button>
+              </div>
             </div>
 
-            <div
-              className={`${styles.button
-                } !w-[100px] !min-h-[40px] !h-[40px] dark:text-white text-black bg-[#cccccc34] 
-              ${areQuestionsUnchanged(data.layout?.faq, questions) ||
+            <div className="mt-8 flex justify-end">
+              <button
+                className={`
+                  px-6 py-2.5 rounded-lg font-Poppins font-medium transition-all shadow-md
+                  ${
+                    areQuestionsUnchanged(data.layout?.faq, questions) ||
+                    isAnyQuestionEmpty(questions)
+                      ? "bg-slate-200 dark:bg-slate-700 text-slate-400 cursor-not-allowed shadow-none"
+                      : "bg-[#45CBA0] hover:bg-[#3ba885] text-white hover:shadow-lg hover:-translate-y-0.5"
+                  }
+                `}
+                disabled={areQuestionsUnchanged(data.layout?.faq, questions) || isAnyQuestionEmpty(questions)}
+                onClick={
+                  areQuestionsUnchanged(data.layout?.faq, questions) ||
                   isAnyQuestionEmpty(questions)
-                  ? "!cursor-not-allowed"
-                  : "!cursor-pointer !bg-[#42d383]"
+                    ? () => null
+                    : handleEdit
                 }
-              !rounded fixed bottom-12 right-12`}
-              onClick={
-                areQuestionsUnchanged(data.layout?.faq, questions) ||
-                  isAnyQuestionEmpty(questions)
-                  ? () => null
-                  : handleEdit
-              }
-            >
-              Save
+              >
+                Save Changes
+              </button>
             </div>
           </div>
         )

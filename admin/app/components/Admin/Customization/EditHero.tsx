@@ -69,138 +69,143 @@ const EditHero: FC<Props> = (props: Props) => {
   };
 
   return (
-    <section className="relative w-full min-h-[calc(100vh-80px)] overflow-hidden bg-transparent transition-colors duration-300">
-      {/* Background animation */}
-      <div className="hero_animation absolute left-[-150px] top-[50px] z-0 h-[400px] w-[400px] rounded-full opacity-70 blur-[1px]" />
+    <div className="w-full mt-0 hero-glass dark:bg-[#111C43]/60 bg-white/80 border border-slate-200 dark:border-white/10 shadow-lg p-8 rounded-xl max-w-[1200px] mx-auto mb-[100px]">
+      <h1 className={`${styles.title} !text-[24px] font-semibold text-slate-800 dark:text-white mb-6 text-center`}>
+        Edit Hero Section
+      </h1>
 
-      {/* Main Hero */}
-      <div className="relative z-10 mx-auto flex min-h-[calc(100vh-80px)] w-[90%] max-w-[1400px] flex-col items-center justify-center gap-12 py-16 lg:flex-row lg:gap-10">
-        {/* Left Content */}
-        <div className="flex w-full flex-col items-center text-center lg:w-[55%] lg:items-start lg:text-left">
-          <textarea
-            className="font-Poppins text-[38px] font-[600] leading-[1.2] text-black transition-colors duration-100 sm:text-[48px] md:text-[55px] lg:text-[60px] dark:text-white bg-transparent outline-none resize-none w-full text-center lg:text-left"
-            placeholder="Learn from the best teachers"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            rows={2}
-          />
-
-          <textarea
-            className="mt-4 w-full max-w-[650px] font-Josefin text-[18px] font-[400] leading-[1.6] text-gray-600 transition-colors duration-100 sm:text-[20px] dark:text-gray-300 bg-transparent outline-none resize-none text-center lg:text-left"
-            placeholder="Join LearnEx and get access to high-quality courses from experienced instructors. Learn new skills and build your future from anywhere."
-            value={subTitle}
-            onChange={(e) => setSubTitle(e.target.value)}
-            rows={3}
-          />
-
-          {/* Search (Static Preview) */}
-          <div className="mt-8 flex h-[55px] w-full max-w-[600px] items-center overflow-hidden rounded-[6px] border border-gray-300 bg-white shadow-sm transition-colors duration-300 dark:border-slate-700 dark:bg-slate-900 opacity-80 pointer-events-none">
-            <input
-              type="search"
-              placeholder="Search Courses..."
-              readOnly
-              className="h-full flex-1 bg-transparent px-4 font-Josefin text-[18px] text-black outline-none placeholder:text-gray-400 transition-colors duration-300 dark:text-white dark:placeholder:text-gray-300"
+      <section className="relative w-full overflow-hidden bg-transparent transition-colors duration-300 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-900/50">
+        {/* Main Hero Preview */}
+        <div className="relative z-10 mx-auto flex w-[90%] flex-col items-center justify-center gap-12 py-16 lg:flex-row lg:gap-10">
+          {/* Left Content */}
+          <div className="flex w-full flex-col items-center text-center lg:w-[55%] lg:items-start lg:text-left">
+            <textarea
+              className="font-Poppins text-[38px] font-[600] leading-[1.2] text-slate-800 transition-colors duration-100 sm:text-[48px] md:text-[55px] lg:text-[60px] dark:text-white bg-transparent outline-none resize-none w-full text-center lg:text-left border border-transparent hover:border-slate-300 dark:hover:border-slate-700 rounded-lg p-2 focus:border-[#45CBA0]"
+              placeholder="Learn from the best teachers"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              rows={2}
             />
-            <button
-              type="button"
-              className="flex h-full w-[60px] items-center justify-center bg-[#37a39a] transition hover:bg-[#2d8d85]"
-            >
-              <BiSearch size={25} className="text-white" />
-            </button>
+
+            <textarea
+              className="mt-4 w-full max-w-[650px] font-Josefin text-[18px] font-[400] leading-[1.6] text-slate-600 transition-colors duration-100 sm:text-[20px] dark:text-slate-300 bg-transparent outline-none resize-none text-center lg:text-left border border-transparent hover:border-slate-300 dark:hover:border-slate-700 rounded-lg p-2 focus:border-[#45CBA0]"
+              placeholder="Join LearnEx and get access to high-quality courses from experienced instructors. Learn new skills and build your future from anywhere."
+              value={subTitle}
+              onChange={(e) => setSubTitle(e.target.value)}
+              rows={3}
+            />
+
+            {/* Search (Static Preview) */}
+            <div className="mt-8 flex h-[55px] w-full max-w-[600px] items-center overflow-hidden rounded-lg border border-slate-300 bg-white shadow-sm transition-colors duration-300 dark:border-slate-700 dark:bg-slate-800 opacity-60 pointer-events-none">
+              <input
+                type="search"
+                placeholder="Search Courses..."
+                readOnly
+                className="h-full flex-1 bg-transparent px-4 font-Josefin text-[18px] text-slate-800 outline-none placeholder:text-slate-400 transition-colors duration-300 dark:text-white dark:placeholder:text-slate-400"
+              />
+              <button
+                type="button"
+                className="flex h-full w-[60px] items-center justify-center bg-[#45CBA0] transition"
+              >
+                <BiSearch size={25} className="text-white" />
+              </button>
+            </div>
+
+            {/* Users + Courses (Static Preview) */}
+            <div className="mt-8 flex flex-col items-center gap-5 sm:flex-row lg:items-center opacity-60 pointer-events-none">
+              <div className="flex items-center">
+                <Image
+                  src={client1}
+                  width={45}
+                  height={45}
+                  alt="LearnEx student"
+                  className="h-[45px] w-[45px] rounded-full border-2 border-slate-200 object-cover dark:border-slate-800"
+                />
+                <Image
+                  src={client2}
+                  width={45}
+                  height={45}
+                  alt="LearnEx student"
+                  className="-ml-3 h-[45px] w-[45px] rounded-full border-2 border-slate-200 object-cover dark:border-slate-800"
+                />
+                <Image
+                  src={client3}
+                  width={45}
+                  height={45}
+                  alt="LearnEx student"
+                  className="-ml-3 h-[45px] w-[45px] rounded-full border-2 border-slate-200 object-cover dark:border-slate-800"
+                />
+              </div>
+              <p className="font-Josefin text-[16px] text-slate-600 transition-colors duration-100 dark:text-slate-300">
+                <span className="font-[600] text-slate-800 dark:text-white">
+                  500K+
+                </span>{" "}
+                people already trust LearnEx.
+              </p>
+            </div>
           </div>
 
-          {/* Users + Courses (Static Preview) */}
-          <div className="mt-8 flex flex-col items-center gap-5 sm:flex-row lg:items-center opacity-80 pointer-events-none">
-            <div className="flex items-center">
-              <Image
-                src={client1}
-                width={45}
-                height={45}
-                alt="LearnEx student"
-                className="h-[45px] w-[45px] rounded-full border-2 border-slate-200 object-cover dark:border-slate-900"
+          {/* Right Image */}
+          <div className="relative flex w-full items-center justify-center lg:w-[45%]">
+            <div className="relative z-10 w-[80%] max-w-[550px] sm:w-[70%] lg:w-full flex items-center justify-center min-h-[300px] border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-full bg-white/50 dark:bg-black/20">
+              {image ? (
+                <img
+                  src={image}
+                  alt=""
+                  className="h-auto w-full object-contain max-h-[400px] rounded-full"
+                />
+              ) : (
+                <p className="text-slate-500 dark:text-slate-400 font-Poppins">No Image Uploaded</p>
+              )}
+              <input
+                type="file"
+                name=""
+                id="banner"
+                accept="image/*"
+                onChange={handleUpdate}
+                className="hidden"
               />
-              <Image
-                src={client2}
-                width={45}
-                height={45}
-                alt="LearnEx student"
-                className="-ml-3 h-[45px] w-[45px] rounded-full border-2 border-slate-200 object-cover dark:border-slate-900"
-              />
-              <Image
-                src={client3}
-                width={45}
-                height={45}
-                alt="LearnEx student"
-                className="-ml-3 h-[45px] w-[45px] rounded-full border-2 border-slate-200 object-cover dark:border-slate-900"
-              />
-            </div>
-            <p className="font-Josefin text-[16px] text-gray-600 transition-colors duration-100 dark:text-gray-300">
-              <span className="font-[600] text-black dark:text-white">
-                500K+
-              </span>{" "}
-              people already trust LearnEx.
-            </p>
-            <div className="rounded-[6px] px-6 py-3 font-Poppins text-[16px] font-[600] bg-black text-white shadow-sm transition-colors duration-100 dark:bg-white dark:text-black">
-              View Courses
+              <label
+                htmlFor="banner"
+                className="absolute bottom-4 right-4 z-20 bg-white dark:bg-slate-800 p-4 rounded-full cursor-pointer shadow-lg border border-slate-200 dark:border-slate-700 hover:scale-105 transition-transform"
+              >
+                <AiOutlineCamera className="text-slate-800 dark:text-white text-[25px]" />
+              </label>
             </div>
           </div>
         </div>
-
-        {/* Right Image */}
-        <div className="relative flex w-full items-center justify-center lg:w-[45%]">
-          {/* Decorative circle */}
-          <div className="absolute right-[5%] top-[5%] h-[280px] w-[280px] rounded-full bg-gradient-to-br from-[#5c5bd6]/40 to-transparent blur-[2px] transition-opacity duration-300 dark:from-[#37a39a]/30 dark:to-transparent sm:h-[350px] sm:w-[350px]" />
-
-          <div className="relative z-10 w-[80%] max-w-[550px] sm:w-[70%] lg:w-full flex items-center justify-center">
-            {image ? (
-              <img
-                src={image}
-                alt=""
-                className="h-auto w-full object-contain"
-              />
-            ) : null}
-            <input
-              type="file"
-              name=""
-              id="banner"
-              accept="image/*"
-              onChange={handleUpdate}
-              className="hidden"
-            />
-            <label
-              htmlFor="banner"
-              className="absolute bottom-4 right-4 z-20 bg-white dark:bg-black p-3 rounded-full cursor-pointer shadow-md border border-gray-300 dark:border-gray-700 hover:scale-105 transition-transform"
-            >
-              <AiOutlineCamera className="dark:text-white text-black text-[25px]" />
-            </label>
-          </div>
-        </div>
-      </div>
+      </section>
 
       {/* Save Button */}
-      <div
-        className={`${
-          styles.button
-        } !w-[100px] !min-h-[40px] !h-[40px] dark:text-white text-black bg-[#cccccc34] 
-      ${
-        data?.layout?.banner?.title !== title ||
-        data?.layout?.banner?.subTitle !== subTitle ||
-        data?.layout?.banner?.image?.url !== image
-          ? "!cursor-pointer !bg-[#42d383]"
-          : "!cursor-not-allowed"
-      }
-      !rounded fixed bottom-12 right-12 z-[100] shadow-lg`}
-        onClick={
-          data?.layout?.banner?.title !== title ||
-          data?.layout?.banner?.subTitle !== subTitle ||
-          data?.layout?.banner?.image?.url !== image
-            ? handleEdit
-            : () => null
-        }
-      >
-        Save
+      <div className="mt-8 flex justify-end">
+        <button
+          className={`
+            px-6 py-2.5 rounded-lg font-Poppins font-medium transition-all shadow-md
+            ${
+              data?.layout?.banner?.title === title &&
+              data?.layout?.banner?.subTitle === subTitle &&
+              data?.layout?.banner?.image?.url === image
+                ? "bg-slate-200 dark:bg-slate-700 text-slate-400 cursor-not-allowed shadow-none"
+                : "bg-[#45CBA0] hover:bg-[#3ba885] text-white hover:shadow-lg hover:-translate-y-0.5"
+            }
+          `}
+          disabled={
+            data?.layout?.banner?.title === title &&
+            data?.layout?.banner?.subTitle === subTitle &&
+            data?.layout?.banner?.image?.url === image
+          }
+          onClick={
+            data?.layout?.banner?.title !== title ||
+            data?.layout?.banner?.subTitle !== subTitle ||
+            data?.layout?.banner?.image?.url !== image
+              ? handleEdit
+              : () => null
+          }
+        >
+          Save Changes
+        </button>
       </div>
-    </section>
+    </div>
   );
 };
 
