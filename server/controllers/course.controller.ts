@@ -175,7 +175,7 @@ export const getCourseByUser = catchAsyncError(
         (course: any) => course.courseId.toString() === courseId,
       );
 
-      if (!courseExists) {
+      if (!courseExists && req.user?.role !== "admin") {
         return next(
           new ErrorHandler("You are not eligible to access this course", 404),
         );

@@ -6,7 +6,7 @@ import { getNotifications, updateNotification } from '../controllers/notificatio
 const router = express.Router()
 
 
-router.get('/get-all-notification', isAuthenticated,authorizeRoles('admin'),getNotifications)
+router.get('/get-all-notifications', isAuthenticated,authorizeRoles('admin'),getNotifications)
 router.get('/update-notification/:id', isAuthenticated,authorizeRoles('admin'),updateNotification)
 
 export default router 
