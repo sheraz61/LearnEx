@@ -21,9 +21,19 @@
   --font-mono: var(--font-josefin);
 }
 
+body, html {
+  /* overflow-x: hidden; */
+  /* overflow-y: scroll; */
+   scrollbar-gutter: stable;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
+}
+
+button {
+  cursor: pointer;
 }
 
 .hero_animation {
@@ -103,4 +113,94 @@ body {
 
 .shake {
   animation: shake 0.5s ease-in-out;
+}
+
+/* ==========================================================================
+   Premium theme tokens (new brand palette)
+   Violet/Indigo primary + warm amber accent — scoped with a `hero-` prefix
+   so existing components keep using the old teal/blue tokens until they
+   are redesigned too.
+   ========================================================================== */
+
+:root {
+  --hero-accent: #7c5cff;
+  --hero-accent-2: #f5b74d;
+}
+
+.hero-grid-pattern {
+  background-image: linear-gradient(
+      to right,
+      rgba(148, 163, 184, 0.09) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, rgba(148, 163, 184, 0.09) 1px, transparent 1px);
+  background-size: 42px 42px;
+  -webkit-mask-image: radial-gradient(
+    ellipse 65% 55% at 50% 35%,
+    black 40%,
+    transparent 100%
+  );
+  mask-image: radial-gradient(
+    ellipse 65% 55% at 50% 35%,
+    black 40%,
+    transparent 100%
+  );
+}
+
+.hero-blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(90px);
+  opacity: 0.45;
+  animation: heroFloat 11s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.hero-blob-violet {
+  background: radial-gradient(circle at 30% 30%, var(--hero-accent), transparent 70%);
+}
+
+.hero-blob-amber {
+  background: radial-gradient(circle at 70% 70%, var(--hero-accent-2), transparent 70%);
+  animation-delay: -4s;
+}
+
+@keyframes heroFloat {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(24px, -22px) scale(1.08);
+  }
+}
+
+@keyframes heroOrbit {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.hero-orbit-ring {
+  animation: heroOrbit 22s linear infinite;
+}
+
+.hero-gradient-text {
+  background: linear-gradient(100deg, #8b6bff 0%, #b06bff 45%, var(--hero-accent-2) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.dark .hero-glass {
+  background: rgba(13, 14, 22, 0.55);
 }

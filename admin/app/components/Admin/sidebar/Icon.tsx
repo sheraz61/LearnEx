@@ -13,6 +13,7 @@ import Quiz from "@mui/icons-material/Quiz";
 import Wysiwyg from "@mui/icons-material/Wysiwyg";
 import ManageHistory from "@mui/icons-material/ManageHistory";
 import ExitToApp from "@mui/icons-material/ExitToApp";
+import Menu from "@mui/icons-material/Menu";
 
 export const HomeOutlinedIcon = HomeOutlined;
 export const ArrowForwardIosIcon = ArrowForwardIos;
@@ -29,3 +30,4 @@ export const QuizIcon = Quiz;
 export const WysiwygIcon = Wysiwyg;
 export const ManageHistoryIcon = ManageHistory;
 export const ExitToAppIcon = ExitToApp;
+export const MenuIcon = Menu;
