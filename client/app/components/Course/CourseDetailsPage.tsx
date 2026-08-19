@@ -3,8 +3,6 @@ import { useGetCourseDetailsQuery } from "@/redux/features/courses/coursesApi";
 import React, { useEffect, useState } from "react";
 import Loader from "../Loader/Loader";
 import Heading from "@/app/utils/Heading";
-import Header from "../Header";
-import Footer from "../Footer";
 import CourseDetails from "./CourseDetails";
 import {
   useCreatePaymentIntentMutation,
@@ -18,8 +16,6 @@ type Props = {
 };
 
 const CourseDetailsPage = ({ id }: Props) => {
-  const [route, setRoute] = useState("Login");
-  const [open, setOpen] = useState(false);
   const { data, isLoading } = useGetCourseDetailsQuery(id);
   const { data: config } = useGetStripePublishablekeyQuery({});
   const [createPaymentIntent, { data: paymentIntentData }] =
@@ -28,21 +24,26 @@ const CourseDetailsPage = ({ id }: Props) => {
   const [stripePromise, setStripePromise] = useState<any>(null);
   const [clientSecret, setClientSecret] = useState("");
 
+  const courseData = data?.course ? (Array.isArray(data.course) ? data.course[0] : data.course) : null;
+
   useEffect(() => {
     if (config) {
       const publishablekey = config?.publishablekey;
       setStripePromise(loadStripe(publishablekey));
     }
-    if (data && userData?.user) {
-      const isPurchased = userData?.user?.courses?.find(
-        (item: any) => item.courseId === data.course._id || item._id === data.course._id
-      );
-      const amount = Math.round(data.course.price * 100);
+    if (courseData && userData?.user) {
+      const isPurchased =
+        userData?.user?.role === "admin" ||
+        userData?.user?.courses?.find(
+          (item: any) =>
+            item.courseId === courseData._id || item._id === courseData._id
+        );
+      const amount = Math.round(courseData.price * 100);
       if (amount > 0 && !isPurchased) {
         createPaymentIntent(amount);
       }
     }
-  }, [config, data, userData]);
+  }, [config, courseData, userData]);
 
   useEffect(() => {
     if (paymentIntentData) {
@@ -52,35 +53,26 @@ const CourseDetailsPage = ({ id }: Props) => {
 
   return (
     <>
-      {isLoading ? (
+      {isLoading || !courseData ? (
         <Loader />
       ) : (
-        <div>
+        <main className="pt-[80px] min-h-[calc(100vh-80px)] bg-white transition-colors duration-300 dark:bg-[#07070c]">
           <Heading
-            title={data?.course?.name + " - ELearning"}
+            title={courseData.name + " - LearnEx"}
             description={
-              "ELearning is a programming community which is developed by shahriar sajeeb for helping programmers"
+              "LearnEx is a programming community which is developed by shahriar sajeeb for helping programmers"
             }
-            keywords={data?.course?.tags}
+            keywords={courseData.tags}
           />
-          <Header
-            route={route}
-            setRoute={setRoute}
-            open={open}
-            setOpen={setOpen}
-            activeItem={1}
-          />
+
           {stripePromise && (
             <CourseDetails
-              data={data.course}
+              data={courseData}
               stripePromise={stripePromise}
               clientSecret={clientSecret}
-              setRoute={setRoute}
-              setOpen={setOpen}
             />
           )}
-          <Footer />
-        </div>
+        </main>
       )}
     </>
   );

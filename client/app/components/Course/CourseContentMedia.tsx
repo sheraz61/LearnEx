@@ -20,9 +20,9 @@ import {
 import { BiMessage } from "react-icons/bi";
 import { VscVerifiedFilled } from "react-icons/vsc";
 import Ratings from "@/app/utils/Ratings";
-// import socketIO from "socket.io-client";
-// const ENDPOINT = process.env.NEXT_PUBLIC_SOCKET_SERVER_URI || "";
-// const socketId = socketIO(ENDPOINT, { transports: ["websocket"] });
+import socketIO from "socket.io-client";
+const ENDPOINT = process.env.NEXT_PUBLIC_SOCKET_SERVER_URI || "";
+const socketId = socketIO(ENDPOINT, { transports: ["websocket"] });
 
 type Props = {
   data: any;
@@ -107,21 +107,21 @@ const CourseContentMedia = ({
       setQuestion("");
       toast.success('question create successfully')
       refetch();
-    //   socketId.emit("notification", {
-    //     title: `New Question Received`,
-    //     message: `You have a new question in ${data[activeVideo].title}`,
-    //     userId: user._id,
-    //   });
+      socketId.emit("notification", {
+        title: `New Question Received`,
+        message: `You have a new question in ${data[activeVideo].title}`,
+        userId: user._id,
+      });
     }
     if (answerSuccess) {
       setAnswer("");
       refetch();
       if (user.role !== "admin") {
-        // socketId.emit("notification", {
-        //   title: `New Reply Received`,
-        //   message: `You have a new question in ${data[activeVideo].title}`,
-        //   userId: user._id,
-        // });
+        socketId.emit("notification", {
+          title: `New Reply Received`,
+          message: `You have a new question in ${data[activeVideo].title}`,
+          userId: user._id,
+        });
       }
     }
     if (error) {
@@ -140,11 +140,11 @@ const CourseContentMedia = ({
       setReview("");
       setRating(1);
       courseRefetch();
-    //   socketId.emit("notification", {
-    //     title: `New Question Received`,
-    //     message: `You have a new question in ${data[activeVideo].title}`,
-    //     userId: user._id,
-    //   });
+      socketId.emit("notification", {
+        title: `New Question Received`,
+        message: `You have a new question in ${data[activeVideo].title}`,
+        userId: user._id,
+      });
     }
     if (reviewError) {
       if ("data" in reviewError) {
@@ -201,31 +201,35 @@ const CourseContentMedia = ({
   };
 
   return (
-    <div className="w-[95%] 800px:w-[86%] py-4 m-auto">
+    <div className="w-full py-4">
       <CoursePlayer
         title={data[activeVideo]?.title}
         videoUrl={data[activeVideo]?.videoUrl}
       />
-      <div className="w-full flex items-center justify-between my-3">
-        <div
-          className={`${
-            styles.button
-          } text-white  !w-[unset] !min-h-[40px] !py-[unset] ${
-            activeVideo === 0 && "!cursor-no-drop opacity-[.8]"
-          }`}
+
+      <div className="w-full flex items-center justify-between mt-4">
+        <button
+          type="button"
+          disabled={activeVideo === 0}
+          className={`flex items-center gap-1.5 rounded-md border px-4 py-2 font-Poppins text-[13px] font-[500] transition-colors ${activeVideo === 0
+              ? "cursor-not-allowed border-slate-200 text-slate-300 dark:border-white/10 dark:text-white/20"
+              : "border-slate-200 text-slate-700 hover:border-[#7c5cff] hover:text-[#7c5cff] dark:border-white/10 dark:text-slate-300"
+            }`}
           onClick={() =>
             setActiveVideo(activeVideo === 0 ? 0 : activeVideo - 1)
           }
         >
-          <AiOutlineArrowLeft className="mr-2" />
+          <AiOutlineArrowLeft size={14} />
           Prev Lesson
-        </div>
-        <div
-          className={`${
-            styles.button
-          } !w-[unset] text-white  !min-h-[40px] !py-[unset] ${
-            data.length - 1 === activeVideo && "!cursor-no-drop opacity-[.8]"
-          }`}
+        </button>
+
+        <button
+          type="button"
+          disabled={data.length - 1 === activeVideo}
+          className={`flex items-center gap-1.5 rounded-md border px-4 py-2 font-Poppins text-[13px] font-[500] transition-colors ${data.length - 1 === activeVideo
+              ? "cursor-not-allowed border-slate-200 text-slate-300 dark:border-white/10 dark:text-white/20"
+              : "border-slate-200 text-slate-700 hover:border-[#7c5cff] hover:text-[#7c5cff] dark:border-white/10 dark:text-slate-300"
+            }`}
           onClick={() =>
             setActiveVideo(
               data && data.length - 1 === activeVideo
@@ -235,138 +239,132 @@ const CourseContentMedia = ({
           }
         >
           Next Lesson
-          <AiOutlineArrowRight className="ml-2" />
-        </div>
+          <AiOutlineArrowRight size={14} />
+        </button>
       </div>
-      <h1 className="pt-2 text-[25px] font-[600] dark:text-white text-black ">
+
+      <h1 className="mt-5 text-[22px] md:text-[26px] font-Poppins font-[600] text-slate-900 dark:text-white leading-tight">
         {data[activeVideo].title}
       </h1>
-      <br />
-      <div className="w-full p-4 flex items-center justify-between bg-slate-500 bg-opacity-20 backdrop-blur shadow-[bg-slate-700] rounded shadow-inner">
+
+      <div className="mt-5 flex w-full items-center gap-6 border-b border-slate-200 dark:border-white/10 ">
         {["Overview", "Resources", "Q&A", "Reviews"].map((text, index) => (
-          <h5
+          <button
+            type="button"
             key={index}
-            className={`800px:text-[20px] cursor-pointer ${
-              activeBar === index
-                ? "text-red-500"
-                : "dark:text-white text-black"
-            }`}
+            className={`shrink-0 -mb-px border-b-2 px-1 py-3 font-Poppins text-[14px] font-[500] transition-colors ${activeBar === index
+                ? "border-[#7c5cff] text-[#7c5cff]"
+                : "border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
+              }`}
             onClick={() => setactiveBar(index)}
           >
             {text}
-          </h5>
+          </button>
         ))}
       </div>
-      <br />
-      {activeBar === 0 && (
-        <p className="text-[18px] whitespace-pre-line mb-3 dark:text-white text-black">
-          {data[activeVideo]?.description}
-        </p>
-      )}
 
-      {activeBar === 1 && (
-        <div>
-          {data[activeVideo]?.links.map((item: any, index: number) => (
-            <div className="mb-5" key={index}>
-              <h2 className="800px:text-[20px] 800px:inline-block dark:text-white text-black">
-                {item.title && item.title + " :"}
-              </h2>
-              <a
-                className="inline-block text-[#4395c4] 800px:text-[20px] 800px:pl-2"
-                href={item.url}
-              >
-                {item.url}
-              </a>
-            </div>
-          ))}
-        </div>
-      )}
+      <div className="pt-6">
+        {activeBar === 0 && (
+          <p className="text-[16px] leading-relaxed whitespace-pre-line text-slate-700 dark:text-slate-300">
+            {data[activeVideo]?.description}
+          </p>
+        )}
 
-      {activeBar === 2 && (
-        <>
-          <div className="flex w-full">
-            <Image
-              src={
-                user.avatar
-                  ? user.avatar.url
-                  : "https://res.cloudinary.com/dshp9jnuy/image/upload/v1665822253/avatars/nrxsg8sd9iy10bbsoenn.png"
-              }
-              width={50}
-              height={50}
-              alt=""
-              className="w-[50px] h-[50px] rounded-full object-cover"
-            />
-            <textarea
-              name=""
-              value={question}
-              onChange={(e) => setQuestion(e.target.value)}
-              id=""
-              cols={40}
-              rows={5}
-              placeholder="Write your question..."
-              className="outline-none bg-transparent ml-3 border dark:text-white text-black border-[#0000001d] dark:border-[#ffffff57] 800px:w-full p-2 rounded w-[90%] 800px:text-[18px] font-Poppins"
-            ></textarea>
-          </div>
-          <div className="w-full flex justify-end">
-            <div
-              className={`${
-                styles.button
-              } !w-[120px] !h-[40px] text-[18px] mt-5 ${
-                questionCreationLoading && "cursor-not-allowed"
-              }`}
-              onClick={questionCreationLoading ? () => {} : handleQuestion}
-            >
-              Submit
-            </div>
-          </div>
-          <br />
-          <br />
-          <div className="w-full h-[1px] bg-[#ffffff3b]"></div>
+        {activeBar === 1 && (
           <div>
-            <CommentReply
-              data={data}
-              activeVideo={activeVideo}
-              answer={answer}
-              setAnswer={setAnswer}
-              handleAnswerSubmit={handleAnswerSubmit}
-              user={user}
-              questionId={questionId}
-              setQuestionId={setQuestionId}
-              answerCreationLoading={answerCreationLoading}
-            />
+            {data[activeVideo]?.links.map((item: any, index: number) => (
+              <div className="mb-4" key={index}>
+                <span className="font-Poppins text-[15px] font-[500] text-slate-900 dark:text-white">
+                  {item.title && item.title + " : "}
+                </span>
+                <a
+                  className="text-[15px] text-[#7c5cff] hover:underline"
+                  href={item.url}
+                >
+                  {item.url}
+                </a>
+              </div>
+            ))}
           </div>
-        </>
-      )}
+        )}
 
-      {activeBar === 3 && (
-        <div className="w-full">
+        {activeBar === 2 && (
           <>
+            <div className="flex w-full gap-3">
+              <Image
+                src={
+                  user.avatar
+                    ? user.avatar.url
+                    : "https://res.cloudinary.com/dshp9jnuy/image/upload/v1665822253/avatars/nrxsg8sd9iy10bbsoenn.png"
+                }
+                width={44}
+                height={44}
+                alt=""
+                className="w-[44px] h-[44px] rounded-full object-cover shrink-0"
+              />
+              <textarea
+                value={question}
+                onChange={(e) => setQuestion(e.target.value)}
+                rows={4}
+                placeholder="Write your question..."
+                className="w-full rounded-md border border-slate-200 bg-transparent p-3 text-[15px] font-Poppins text-slate-900 outline-none focus:border-[#7c5cff] dark:border-white/10 dark:text-white"
+              ></textarea>
+            </div>
+            <div className="w-full flex justify-end mt-3">
+              <button
+                type="button"
+                disabled={questionCreationLoading}
+                className="rounded-md bg-[#7c5cff] px-5 py-2 font-Poppins text-[14px] font-[500] text-white transition-opacity hover:opacity-90 disabled:opacity-50"
+                onClick={questionCreationLoading ? () => { } : handleQuestion}
+              >
+                Submit
+              </button>
+            </div>
+
+            <div className="mt-8 pt-6 border-t border-slate-200 dark:border-white/10">
+              <CommentReply
+                data={data}
+                activeVideo={activeVideo}
+                answer={answer}
+                setAnswer={setAnswer}
+                handleAnswerSubmit={handleAnswerSubmit}
+                user={user}
+                questionId={questionId}
+                setQuestionId={setQuestionId}
+                answerCreationLoading={answerCreationLoading}
+              />
+            </div>
+          </>
+        )}
+
+        {activeBar === 3 && (
+          <div className="w-full">
             {!isReviewExists && (
               <>
-                <div className="flex w-full">
+                <div className="flex w-full gap-3">
                   <Image
                     src={
                       user.avatar
                         ? user.avatar.url
                         : "https://res.cloudinary.com/dshp9jnuy/image/upload/v1665822253/avatars/nrxsg8sd9iy10bbsoenn.png"
                     }
-                    width={50}
-                    height={50}
+                    width={44}
+                    height={44}
                     alt=""
-                    className="w-[50px] h-[50px] rounded-full object-cover"
+                    className="w-[44px] h-[44px] rounded-full object-cover shrink-0"
                   />
                   <div className="w-full">
-                    <h5 className="pl-3 text-[20px] font-[500] dark:text-white text-black ">
-                      Give a Rating <span className="text-red-500">*</span>
+                    <h5 className="text-[15px] font-[500] text-slate-900 dark:text-white mb-1">
+                      Rating <span className="text-red-500">*</span>
                     </h5>
-                    <div className="flex w-full ml-2 pb-3">
+                    <div className="flex mb-3">
                       {[1, 2, 3, 4, 5].map((i) =>
                         rating >= i ? (
                           <AiFillStar
                             key={i}
                             className="mr-1 cursor-pointer"
                             color="rgb(246,186,0)"
-                            size={25}
+                            size={22}
                             onClick={() => setRating(i)}
                           />
                         ) : (
@@ -374,95 +372,88 @@ const CourseContentMedia = ({
                             key={i}
                             className="mr-1 cursor-pointer"
                             color="rgb(246,186,0)"
-                            size={25}
+                            size={22}
                             onClick={() => setRating(i)}
                           />
                         )
                       )}
                     </div>
                     <textarea
-                      name=""
                       value={review}
                       onChange={(e) => setReview(e.target.value)}
-                      id=""
-                      cols={40}
-                      rows={5}
+                      rows={4}
                       placeholder="Write your comment..."
-                      className="outline-none bg-transparent 800px:ml-3 dark:text-white text-black border border-[#00000027] dark:border-[#ffffff57] w-[95%] 800px:w-full p-2 rounded text-[18px] font-Poppins"
+                      className="w-full rounded-md border border-slate-200 bg-transparent p-3 text-[15px] font-Poppins text-slate-900 outline-none focus:border-[#7c5cff] dark:border-white/10 dark:text-white"
                     ></textarea>
                   </div>
                 </div>
-                <div className="w-full flex justify-end">
-                  <div
-                    className={`${
-                      styles.button
-                    } !w-[120px] !h-[40px] text-[18px] mt-5 800px:mr-0 mr-2 ${
-                      reviewCreationLoading && "cursor-no-drop"
-                    }`}
+                <div className="w-full flex justify-end mt-3">
+                  <button
+                    type="button"
+                    disabled={reviewCreationLoading}
+                    className="rounded-md bg-[#7c5cff] px-5 py-2 font-Poppins text-[14px] font-[500] text-white transition-opacity hover:opacity-90 disabled:opacity-50"
                     onClick={
-                      reviewCreationLoading ? () => {} : handleReviewSubmit
+                      reviewCreationLoading ? () => { } : handleReviewSubmit
                     }
                   >
                     Submit
-                  </div>
+                  </button>
                 </div>
               </>
             )}
-            <br />
-            <div className="w-full h-[1px] bg-[#ffffff3b]"></div>
-            <div className="w-full">
+
+            <div className="mt-8 pt-6 border-t border-slate-200 dark:border-white/10 space-y-6">
               {(course?.reviews && [...course.reviews].reverse())?.map(
                 (item: any, index: number) => {
-                  
                   return (
-                    <div className="w-full my-5 dark:text-white text-black" key={index}>
-                      <div className="w-full flex">
-                        <div>
-                          <Image
-                            src={
-                              item.user.avatar
-                                ? item.user.avatar.url
-                                : "https://res.cloudinary.com/dshp9jnuy/image/upload/v1665822253/avatars/nrxsg8sd9iy10bbsoenn.png"
-                            }
-                            width={50}
-                            height={50}
-                            alt=""
-                            className="w-[50px] h-[50px] rounded-full object-cover"
-                          />
-                        </div>
-                        <div className="ml-2">
-                          <h1 className="text-[18px]">{item?.user.name}</h1>
+                    <div className="w-full" key={index}>
+                      <div className="w-full flex gap-3">
+                        <Image
+                          src={
+                            item.user.avatar
+                              ? item.user.avatar.url
+                              : "https://res.cloudinary.com/dshp9jnuy/image/upload/v1665822253/avatars/nrxsg8sd9iy10bbsoenn.png"
+                          }
+                          width={44}
+                          height={44}
+                          alt=""
+                          className="w-[44px] h-[44px] rounded-full object-cover shrink-0"
+                        />
+                        <div className="w-full">
+                          <h1 className="text-[15px] font-[500] text-slate-900 dark:text-white">{item?.user.name}</h1>
                           <Ratings rating={item.rating} />
-                          <p>{item.comment}</p>
-                          <small className="text-[#0000009e] dark:text-[#ffffff83]">
-                            {format(item.createdAt)} •
+                          <p className="mt-1 text-[14px] text-slate-600 dark:text-slate-300">{item.comment}</p>
+                          <small className="text-slate-400 dark:text-white/40">
+                            {format(item.createdAt)}
                           </small>
                         </div>
                       </div>
+
                       {user.role === "admin" && item.commentReplies.length === 0 && (
-                        <span
-                          className={`${styles.label} !ml-10 cursor-pointer`}
+                        <button
+                          type="button"
+                          className="mt-2 ml-[56px] text-[13px] font-[500] text-[#7c5cff] hover:underline"
                           onClick={() => {
                             setIsReviewReply(true);
                             setReviewId(item._id);
                           }}
                         >
                           Add Reply
-                        </span>
+                        </button>
                       )}
 
                       {isReviewReply && reviewId === item._id && (
-                        <div className="w-full flex relative">
+                        <div className="w-full flex relative ml-[56px] mt-2">
                           <input
                             type="text"
                             placeholder="Enter your reply..."
                             value={reply}
                             onChange={(e: any) => setReply(e.target.value)}
-                            className="block 800px:ml-12 mt-2 outline-none bg-transparent border-b border-[#000] dark:border-[#fff] p-[5px] w-[95%]"
+                            className="block outline-none bg-transparent border-b border-slate-300 dark:border-white/20 p-1 w-full text-[14px] text-slate-900 dark:text-white"
                           />
                           <button
                             type="submit"
-                            className="absolute right-0 bottom-1"
+                            className="absolute right-0 bottom-1 text-[13px] font-[500] text-[#7c5cff]"
                             onClick={handleReviewReplySubmit}
                           >
                             Submit
@@ -471,28 +462,28 @@ const CourseContentMedia = ({
                       )}
 
                       {item.commentReplies.map((i: any, index: number) => (
-                        <div className="w-full flex 800px:ml-16 my-5" key={index}>
-                          <div className="w-[50px] h-[50px]">
-                            <Image
-                              src={
-                                i.user.avatar
-                                  ? i.user.avatar.url
-                                  : "https://res.cloudinary.com/dshp9jnuy/image/upload/v1665822253/avatars/nrxsg8sd9iy10bbsoenn.png"
-                              }
-                              width={50}
-                              height={50}
-                              alt=""
-                              className="w-[50px] h-[50px] rounded-full object-cover"
-                            />
-                          </div>
-                          <div className="pl-2">
-                            <div className="flex items-center">
-                              <h5 className="text-[20px]">{i.user.name}</h5>{" "}
-                              <VscVerifiedFilled className="text-[#0095F6] ml-2 text-[20px]" />
+                        <div className="w-full flex gap-3 mt-4 ml-[56px]" key={index}>
+                          <Image
+                            src={
+                              i.user.avatar
+                                ? i.user.avatar.url
+                                : "https://res.cloudinary.com/dshp9jnuy/image/upload/v1665822253/avatars/nrxsg8sd9iy10bbsoenn.png"
+                            }
+                            width={40}
+                            height={40}
+                            alt=""
+                            className="w-[40px] h-[40px] rounded-full object-cover shrink-0"
+                          />
+                          <div>
+                            <div className="flex items-center gap-1.5">
+                              <h5 className="text-[14px] font-[500] text-slate-900 dark:text-white">
+                                {i.user.name}
+                              </h5>
+                              <VscVerifiedFilled className="text-[#0095F6] text-[16px]" />
                             </div>
-                            <p>{i.comment}</p>
-                            <small className="text-[#ffffff83]">
-                              {format(i.createdAt)} •
+                            <p className="mt-1 text-[14px] text-slate-600 dark:text-slate-300">{i.comment}</p>
+                            <small className="text-slate-400 dark:text-white/40">
+                              {format(i.createdAt)}
                             </small>
                           </div>
                         </div>
@@ -502,9 +493,9 @@ const CourseContentMedia = ({
                 }
               )}
             </div>
-          </>
-        </div>
-      )}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
@@ -520,25 +511,23 @@ const CommentReply = ({
   answerCreationLoading,
 }: any) => {
   return (
-    <>
-      <div className="w-full my-3">
-        {data[activeVideo].questions.map((item: any, index: any) => (
-          <CommentItem
-            key={index}
-            data={data}
-            activeVideo={activeVideo}
-            item={item}
-            index={index}
-            answer={answer}
-            setAnswer={setAnswer}
-            questionId={questionId}
-            setQuestionId={setQuestionId}
-            handleAnswerSubmit={handleAnswerSubmit}
-            answerCreationLoading={answerCreationLoading}
-          />
-        ))}
-      </div>
-    </>
+    <div className="w-full space-y-6">
+      {data[activeVideo].questions.map((item: any, index: any) => (
+        <CommentItem
+          key={index}
+          data={data}
+          activeVideo={activeVideo}
+          item={item}
+          index={index}
+          answer={answer}
+          setAnswer={setAnswer}
+          questionId={questionId}
+          setQuestionId={setQuestionId}
+          handleAnswerSubmit={handleAnswerSubmit}
+          answerCreationLoading={answerCreationLoading}
+        />
+      ))}
+    </div>
   );
 };
 
@@ -553,111 +542,99 @@ const CommentItem = ({
 }: any) => {
   const [replyActive, setreplyActive] = useState(false);
   return (
-    <>
-      <div className="my-4">
-        <div className="flex mb-2">
-          <div>
-            <Image
-              src={
-                item.user.avatar
-                  ? item.user.avatar.url
-                  : "https://res.cloudinary.com/dshp9jnuy/image/upload/v1665822253/avatars/nrxsg8sd9iy10bbsoenn.png"
-              }
-              width={50}
-              height={50}
-              alt=""
-              className="w-[50px] h-[50px] rounded-full object-cover"
-            />
-          </div>
-          <div className="pl-3 dark:text-white text-black">
-            <h5 className="text-[20px]">{item?.user.name}</h5>
-            <p>{item?.question}</p>
-            <small className="text-[#000000b8] dark:text-[#ffffff83]">
-              {!item.createdAt ? "" : format(item?.createdAt)} •
-            </small>
-          </div>
+    <div>
+      <div className="flex gap-3 mb-2">
+        <Image
+          src={
+            item.user.avatar
+              ? item.user.avatar.url
+              : "https://res.cloudinary.com/dshp9jnuy/image/upload/v1665822253/avatars/nrxsg8sd9iy10bbsoenn.png"
+          }
+          width={44}
+          height={44}
+          alt=""
+          className="w-[44px] h-[44px] rounded-full object-cover shrink-0"
+        />
+        <div>
+          <h5 className="text-[15px] font-[500] text-slate-900 dark:text-white">{item?.user.name}</h5>
+          <p className="text-[14px] text-slate-600 dark:text-slate-300">{item?.question}</p>
+          <small className="text-slate-400 dark:text-white/40">
+            {!item.createdAt ? "" : format(item?.createdAt)}
+          </small>
         </div>
-        <div className="w-full flex">
-          <span
-            className="800px:pl-16 text-[#000000b8] dark:text-[#ffffff83] cursor-pointer mr-2"
-            onClick={() => {
-              setreplyActive(!replyActive);
-              setQuestionId(item._id);
-            }}
-          >
-            {!replyActive
-              ? item.questionReplies.length !== 0
-                ? "All Replies"
-                : "Add Reply"
-              : "Hide Replies"}
-          </span>
-          <BiMessage
-            size={20}
-            className="dark:text-[#ffffff83] cursor-pointer text-[#000000b8]"
-          />
-          <span className="pl-1 mt-[-4px] cursor-pointer text-[#000000b8] dark:text-[#ffffff83]">
-            {item.questionReplies.length}
-          </span>
-        </div>
-
-        {replyActive && questionId === item._id &&  (
-          <>
-            {item.questionReplies.map((item: any) => (
-              <div className="w-full flex 800px:ml-16 my-5 text-black dark:text-white" key={item._id}>
-                <div>
-                  <Image
-                    src={
-                      item.user.avatar
-                        ? item.user.avatar.url
-                        : "https://res.cloudinary.com/dshp9jnuy/image/upload/v1665822253/avatars/nrxsg8sd9iy10bbsoenn.png"
-                    }
-                    width={50}
-                    height={50}
-                    alt=""
-                    className="w-[50px] h-[50px] rounded-full object-cover"
-                  />
-                </div>
-                <div className="pl-3">
-                  <div className="flex items-center">
-                    <h5 className="text-[20px]">{item.user.name}</h5>{" "}
-                    {item.user.role === "admin" && (
-                      <VscVerifiedFilled className="text-[#0095F6] ml-2 text-[20px]" />
-                    )}
-                  </div>
-                  <p>{item.answer}</p>
-                  <small className="text-[#ffffff83]">
-                    {format(item.createdAt)} •
-                  </small>
-                </div>
-              </div>
-            ))}
-            <>
-              <div className="w-full flex relative dark:text-white text-black">
-                <input
-                  type="text"
-                  placeholder="Enter your answer..."
-                  value={answer}
-                  onChange={(e: any) => setAnswer(e.target.value)}
-                  className={`block 800px:ml-12 mt-2 outline-none bg-transparent border-b border-[#00000027] dark:text-white text-black dark:border-[#fff] p-[5px] w-[95%] ${
-                    answer === "" ||
-                    (answerCreationLoading && "cursor-not-allowed")
-                  }`}
-                />
-                <button
-                  type="submit"
-                  className="absolute right-0 bottom-1"
-                  onClick={handleAnswerSubmit}
-                  disabled={answer === "" || answerCreationLoading}
-                >
-                  Submit
-                </button>
-              </div>
-              <br />
-            </>
-          </>
-        )}
       </div>
-    </>
+
+      <div className="w-full flex items-center gap-1.5 ml-[56px]">
+        <button
+          type="button"
+          className="text-[13px] font-[500] text-slate-500 hover:text-[#7c5cff] dark:text-slate-400"
+          onClick={() => {
+            setreplyActive(!replyActive);
+            setQuestionId(item._id);
+          }}
+        >
+          {!replyActive
+            ? item.questionReplies.length !== 0
+              ? "All Replies"
+              : "Add Reply"
+            : "Hide Replies"}
+        </button>
+        <BiMessage size={16} className="text-slate-400 dark:text-slate-500 ml-2" />
+        <span className="text-[13px] text-slate-400 dark:text-slate-500">
+          {item.questionReplies.length}
+        </span>
+      </div>
+
+      {replyActive && questionId === item._id && (
+        <>
+          {item.questionReplies.map((item: any) => (
+            <div className="w-full flex gap-3 mt-4 ml-[56px]" key={item._id}>
+              <Image
+                src={
+                  item.user.avatar
+                    ? item.user.avatar.url
+                    : "https://res.cloudinary.com/dshp9jnuy/image/upload/v1665822253/avatars/nrxsg8sd9iy10bbsoenn.png"
+                }
+                width={40}
+                height={40}
+                alt=""
+                className="w-[40px] h-[40px] rounded-full object-cover shrink-0"
+              />
+              <div>
+                <div className="flex items-center gap-1.5">
+                  <h5 className="text-[14px] font-[500] text-slate-900 dark:text-white">{item.user.name}</h5>
+                  {item.user.role === "admin" && (
+                    <VscVerifiedFilled className="text-[#0095F6] text-[16px]" />
+                  )}
+                </div>
+                <p className="mt-1 text-[14px] text-slate-600 dark:text-slate-300">{item.answer}</p>
+                <small className="text-slate-400 dark:text-white/40">
+                  {format(item.createdAt)}
+                </small>
+              </div>
+            </div>
+          ))}
+
+          <div className="w-full flex relative ml-[56px] mt-3">
+            <input
+              type="text"
+              placeholder="Enter your answer..."
+              value={answer}
+              onChange={(e: any) => setAnswer(e.target.value)}
+              className="block outline-none bg-transparent border-b border-slate-300 dark:border-white/20 p-1 w-full text-[14px] text-slate-900 dark:text-white"
+            />
+            <button
+              type="submit"
+              className="absolute right-0 bottom-1 text-[13px] font-[500] text-[#7c5cff] disabled:opacity-40"
+              onClick={handleAnswerSubmit}
+              disabled={answer === "" || answerCreationLoading}
+            >
+              Submit
+            </button>
+          </div>
+        </>
+      )}
+    </div>
   );
 };
 

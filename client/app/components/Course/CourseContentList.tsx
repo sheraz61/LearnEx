@@ -14,12 +14,11 @@ const CourseContentList: FC<Props> = (props) => {
     new Set<string>()
   );
 
-  // Find unique video sections
   const videoSections: string[] = [
     ...new Set<string>(props.data?.map((item: any) => item.videoSection)),
   ];
 
-  let totalCount: number = 0; // Total count of videos from previous sections
+  let totalCount: number = 0;
 
   const toggleSection = (section: string) => {
     const newVisibleSections = new Set(visibleSections);
@@ -32,82 +31,86 @@ const CourseContentList: FC<Props> = (props) => {
   };
 
   return (
-    <div className={`mt-[15px] w-full ${!props.isDemo && 'ml-[-30px] min-h-screen sticky top-24 left-0 z-30'}`}>
+    <div className={`w-full ${!props.isDemo ? 'lg:sticky lg:top-24 lg:left-0 z-30' : ''}`}>
       {videoSections.map((section: string, sectionIndex: number) => {
 
         const isSectionVisible = visibleSections.has(section);
 
-        // Filter videos by section
         const sectionVideos: any[] = props.data.filter(
           (item: any) => item.videoSection === section
         );
 
-        const sectionVideoCount: number = sectionVideos.length; // Number of videos in the current section
+        const sectionVideoCount: number = sectionVideos.length;
         const sectionVideoLength: number = sectionVideos.reduce(
           (totalLength: number, item: any) => totalLength + item.videoLength,
           0
         );
-        const sectionStartIndex: number = totalCount; // Start index of videos within the current section
-        totalCount += sectionVideoCount; // Update the total count of videos
+        const sectionStartIndex: number = totalCount;
+        totalCount += sectionVideoCount;
 
         const sectionContentHours: number = sectionVideoLength / 60;
 
         return (
-          <div className={`${!props.isDemo && 'border-b border-[#0000001c] dark:border-[#ffffff8e] pb-2'}`} key={section}>
-            <div className="w-full flex">
-              {/* Render video section */}
-              <div className="w-full flex justify-between items-center"
-              >
-                <h2 className="text-[22px] text-black dark:text-white">{section}</h2>
-                <button
-                  className="mr-4 cursor-pointer text-black dark:text-white"
-                  onClick={() => toggleSection(section)}
-                >
-                  {isSectionVisible ? (
-                    <BsChevronUp size={20} />
-                  ) : (
-                    <BsChevronDown size={20} />
-                  )}
-                </button>
+          <div
+            className={`mb-3 overflow-hidden rounded-lg ${!props.isDemo ? 'border border-slate-200 dark:border-white/10' : 'border-b border-slate-200 dark:border-white/10 last:border-0'}`}
+            key={section}
+          >
+            <button
+              type="button"
+              className="w-full flex justify-between items-center p-4 text-left hover:bg-slate-50 dark:hover:bg-white/[0.03] transition-colors"
+              onClick={() => toggleSection(section)}
+            >
+              <div>
+                <h2 className="text-[15px] font-Poppins font-[600] text-slate-900 dark:text-white">
+                  {section}
+                </h2>
+                <p className="mt-0.5 font-Josefin text-[13px] text-slate-500 dark:text-slate-400">
+                  {sectionVideoCount} lessons ·{" "}
+                  {sectionVideoLength < 60
+                    ? sectionVideoLength
+                    : sectionContentHours.toFixed(2)}{" "}
+                  {sectionVideoLength > 60 ? "hours" : "minutes"}
+                </p>
               </div>
-            </div>
-            <h5 className="text-black dark:text-white">
-              {sectionVideoCount} Lessons ·{" "}
-              {sectionVideoLength < 60
-                ? sectionVideoLength
-                : sectionContentHours.toFixed(2)}{" "}
-              {sectionVideoLength > 60 ? "hours" : "minutes"}
-            </h5>
-            <br />
+              <span className="text-slate-400 dark:text-slate-500">
+                {isSectionVisible ? (
+                  <BsChevronUp size={16} />
+                ) : (
+                  <BsChevronDown size={16} />
+                )}
+              </span>
+            </button>
+
             {isSectionVisible && (
-              <div className="w-full">
+              <div className="border-t border-slate-200 dark:border-white/10">
                 {sectionVideos.map((item: any, index: number) => {
-                  const videoIndex: number = sectionStartIndex + index; // Calculate the video index within the overall list
+                  const videoIndex: number = sectionStartIndex + index;
                   const contentLength: number = item.videoLength / 60;
+                  const isActive = videoIndex === props.activeVideo;
+
                   return (
                     <div
-                      className={`w-full ${
-                        videoIndex === props.activeVideo ? "bg-slate-800" : ""
-                      } cursor-pointer transition-all p-2`}
+                      className={`w-full flex items-center gap-3 py-3 px-4 cursor-pointer transition-colors ${
+                        isActive
+                          ? "bg-[#7c5cff]/[0.06]"
+                          : "hover:bg-slate-50 dark:hover:bg-white/[0.02]"
+                      }`}
                       key={item._id}
                       onClick={() => props.isDemo ? null : props?.setActiveVideo(videoIndex)}
                     >
-                      <div className="flex items-start">
-                        <div>
-                          <MdOutlineOndemandVideo
-                            size={25}
-                            className="mr-2"
-                            color="#1cdada"
-                          />
-                        </div>
-                        <h1 className="text-[18px] inline-block break-words text-black dark:text-white">
+                      <MdOutlineOndemandVideo
+                        size={18}
+                        className={`shrink-0 ${isActive ? 'text-[#7c5cff]' : 'text-slate-400 dark:text-slate-500'}`}
+                      />
+                      <div className="flex-1 min-w-0">
+                        <h1 className={`text-[14px] font-Poppins truncate ${isActive ? 'font-[600] text-[#7c5cff]' : 'font-[500] text-slate-800 dark:text-slate-200'}`}>
                           {item.title}
                         </h1>
                       </div>
-                      <h5 className="pl-8 text-black dark:text-white">
-                        {item.videoLength > 60 ? contentLength.toFixed(2) : item.videoLength}{" "}
-                        {item.videoLength > 60 ? "hours" : "minutes"}
-                      </h5>
+                      <span className="shrink-0 font-Josefin text-[13px] text-slate-400 dark:text-slate-500">
+                        {item.videoLength > 60 ? contentLength.toFixed(2) : item.videoLength}
+                        {item.videoLength > 60 ? "h" : "m"}
+                      </span>
                     </div>
                   );
                 })}
