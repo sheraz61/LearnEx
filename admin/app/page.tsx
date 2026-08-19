@@ -29,7 +29,7 @@ const Page: FC<Props> = (props) => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors duration-300 p-4 sm:p-0">
       <Heading
         title="Admin Portal - LearnEx"
         description="Login to the LearnEx Admin Portal"
@@ -37,7 +37,7 @@ const Page: FC<Props> = (props) => {
       />
       
       {/* Login Card */}
-      <div className="w-full max-w-md p-8 bg-white dark:bg-slate-800 rounded-2xl shadow-xl">
+      <div className="w-full max-w-md p-6 sm:p-8 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-white/5">
         <Login setRoute={setRoute} setOpen={setOpen} refetch={refetch} />
       </div>
     </div>

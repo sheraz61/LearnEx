@@ -3,13 +3,13 @@
 import { useGetUsersAllCoursesQuery } from "@/redux/features/courses/coursesApi";
 import { useGetHeroDataQuery } from "@/redux/features/layout/layoutApi";
 import { useSearchParams } from "next/navigation";
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, Suspense } from "react";
 
 import Loader from "../components/Loader/Loader";
 import Heading from "../utils/Heading";
 import CourseCard from "../components/Course/CourseCard";
 
-const Page = () => {
+const CoursesContent = () => {
   const searchParams = useSearchParams();
   const search = searchParams?.get("title") || "";
 
@@ -176,6 +176,14 @@ const Page = () => {
         </main>
       )}
     </div>
+  );
+};
+
+const Page = () => {
+  return (
+    <Suspense fallback={<Loader />}>
+      <CoursesContent />
+    </Suspense>
   );
 };
 
