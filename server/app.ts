@@ -20,7 +20,7 @@ app.use(cookieParser());
 // cross origin resoruce sharing
 app.use(
   cors({
-    origin:['http://localhost:3000','http://localhost:3001'],
+    origin: process.env.ORIGIN ? JSON.parse(process.env.ORIGIN.replace(/'/g, '"')) : ['http://localhost:3000','http://localhost:3001'],
     credentials: true
   }),
 );

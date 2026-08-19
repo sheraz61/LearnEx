@@ -7,6 +7,6 @@ const router = express.Router()
 
 
 router.get('/get-all-notifications', isAuthenticated,authorizeRoles('admin'),getNotifications)
-router.get('/update-notification/:id', isAuthenticated,authorizeRoles('admin'),updateNotification)
+router.put('/update-notification/:id', isAuthenticated,authorizeRoles('admin'),updateNotification)
 
 export default router 
