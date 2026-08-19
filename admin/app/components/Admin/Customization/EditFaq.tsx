@@ -22,7 +22,7 @@ const EditFaq = (props: Props) => {
 
   useEffect(() => {
     if (data) {
-      setQuestions(data.layout?.faq);
+      setQuestions(data.layout?.faq || []);
     }
   }, [data]);
 
