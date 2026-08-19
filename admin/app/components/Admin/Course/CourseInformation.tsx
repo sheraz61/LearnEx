@@ -72,10 +72,13 @@ const CourseInformation: FC<Props> = ({
   };
 
   return (
-    <div className="w-[80%] m-auto mt-24">
-      <form onSubmit={handleSubmit} className={`${styles.label}`}>
+    <div className="w-full">
+      <h2 className="text-2xl font-Poppins font-semibold text-slate-800 dark:text-white mb-6">
+        Course Information
+      </h2>
+      <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label htmlFor="">Course Name</label>
+          <label className="block text-[16px] font-Poppins font-medium text-slate-700 dark:text-slate-300 mb-2" htmlFor="name">Course Name</label>
           <input
             type="name"
             name=""
@@ -85,31 +88,30 @@ const CourseInformation: FC<Props> = ({
               setCourseInfo({ ...courseInfo, name: e.target.value })
             }
             id="name"
-            placeholder="MERN stack LMS platform with next 13"
-            className={`
-            ${styles.input}`}
+            placeholder="e.g. MERN stack LMS platform with next 13"
+            className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-white/10 rounded-lg p-3 outline-none focus:border-[var(--hero-accent)] transition-colors text-slate-800 dark:text-white placeholder:text-slate-400"
           />
         </div>
-        <br />
-        <div className="mb-5">
-          <label className={`${styles.label}`}>Course Description</label>
+        
+        <div>
+          <label className="block text-[16px] font-Poppins font-medium text-slate-700 dark:text-slate-300 mb-2">Course Description</label>
           <textarea
             name=""
             id=""
             cols={30}
             rows={8}
             placeholder="Write something amazing..."
-            className={`${styles.input} !h-min !py-2`}
+            className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-white/10 rounded-lg p-3 outline-none focus:border-[var(--hero-accent)] transition-colors text-slate-800 dark:text-white placeholder:text-slate-400 resize-none"
             value={courseInfo.description}
             onChange={(e: any) =>
               setCourseInfo({ ...courseInfo, description: e.target.value })
             }
           ></textarea>
         </div>
-        <br />
-        <div className="w-full flex justify-between">
-          <div className="w-[45%]">
-            <label className={`${styles.label}`}>Course Price</label>
+        
+        <div className="w-full flex flex-col md:flex-row justify-between gap-6">
+          <div className="w-full md:w-1/2">
+            <label className="block text-[16px] font-Poppins font-medium text-slate-700 dark:text-slate-300 mb-2">Course Price</label>
             <input
               type="number"
               name=""
@@ -119,13 +121,12 @@ const CourseInformation: FC<Props> = ({
                 setCourseInfo({ ...courseInfo, price: e.target.value })
               }
               id="price"
-              placeholder="29"
-              className={`
-            ${styles.input}`}
+              placeholder="e.g. 29"
+              className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-white/10 rounded-lg p-3 outline-none focus:border-[var(--hero-accent)] transition-colors text-slate-800 dark:text-white placeholder:text-slate-400"
             />
           </div>
-          <div className="w-[50%]">
-            <label className={`${styles.label} w-[50%]`}>
+          <div className="w-full md:w-1/2">
+            <label className="block text-[16px] font-Poppins font-medium text-slate-700 dark:text-slate-300 mb-2">
               Estimated Price (optional)
             </label>
             <input
@@ -135,17 +136,16 @@ const CourseInformation: FC<Props> = ({
               onChange={(e: any) =>
                 setCourseInfo({ ...courseInfo, estimatedPrice: e.target.value })
               }
-              id="price"
-              placeholder="79"
-              className={`
-            ${styles.input}`}
+              id="estimatedPrice"
+              placeholder="e.g. 79"
+              className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-white/10 rounded-lg p-3 outline-none focus:border-[var(--hero-accent)] transition-colors text-slate-800 dark:text-white placeholder:text-slate-400"
             />
           </div>
         </div>
-        <br />
-        <div className="w-full flex justify-between">
-          <div className="w-[45%]">
-            <label className={`${styles.label}`} htmlFor="email">
+        
+        <div className="w-full flex flex-col md:flex-row justify-between gap-6">
+          <div className="w-full md:w-1/2">
+            <label className="block text-[16px] font-Poppins font-medium text-slate-700 dark:text-slate-300 mb-2" htmlFor="tags">
               Course Tags
             </label>
             <input
@@ -157,31 +157,30 @@ const CourseInformation: FC<Props> = ({
                 setCourseInfo({ ...courseInfo, tags: e.target.value })
               }
               id="tags"
-              placeholder="MERN,Next 13,Socket io,tailwind css,LMS"
-              className={`
-            ${styles.input}`}
+              placeholder="e.g. MERN, Next 13, Tailwind CSS"
+              className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-white/10 rounded-lg p-3 outline-none focus:border-[var(--hero-accent)] transition-colors text-slate-800 dark:text-white placeholder:text-slate-400"
             />
           </div>
-          <div className="w-[50%]">
-            <label className={`${styles.label} w-[50%]`}>
+          <div className="w-full md:w-1/2">
+            <label className="block text-[16px] font-Poppins font-medium text-slate-700 dark:text-slate-300 mb-2">
               Course Categories
             </label>
             <select
               name=""
               id=""
-              className={`${styles.input}`}
-              value={courseInfo.category}
+              className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-white/10 rounded-lg p-3 outline-none focus:border-[var(--hero-accent)] transition-colors text-slate-800 dark:text-white"
+              value={courseInfo.categories}
               onChange={(e: any) =>
                 setCourseInfo({ ...courseInfo, categories: e.target.value })
               }
             >
-               <option className="dark:bg-[#000] text-[#fff]" value="">
+               <option className="dark:bg-slate-800 text-slate-800 dark:text-white" value="">
                 Select Category
               </option>
               {categories &&
                 categories.map((item: any) => (
                   <option
-                    className="dark:bg-[#000] text-[#fff]"
+                    className="dark:bg-slate-800 text-slate-800 dark:text-white"
                     value={item.title}
                     key={item._id}
                   >
@@ -191,10 +190,10 @@ const CourseInformation: FC<Props> = ({
             </select>
           </div>
         </div>
-        <br />
-        <div className="w-full flex justify-between">
-          <div className="w-[45%]">
-            <label className={`${styles.label}`}>Course Level</label>
+        
+        <div className="w-full flex flex-col md:flex-row justify-between gap-6">
+          <div className="w-full md:w-1/2">
+            <label className="block text-[16px] font-Poppins font-medium text-slate-700 dark:text-slate-300 mb-2">Course Level</label>
             <input
               type="text"
               name=""
@@ -204,13 +203,12 @@ const CourseInformation: FC<Props> = ({
                 setCourseInfo({ ...courseInfo, level: e.target.value })
               }
               id="level"
-              placeholder="Beginner/Intermediate/Expert"
-              className={`
-            ${styles.input}`}
+              placeholder="e.g. Beginner/Intermediate/Expert"
+              className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-white/10 rounded-lg p-3 outline-none focus:border-[var(--hero-accent)] transition-colors text-slate-800 dark:text-white placeholder:text-slate-400"
             />
           </div>
-          <div className="w-[50%]">
-            <label className={`${styles.label} w-[50%]`}>Demo Url</label>
+          <div className="w-full md:w-1/2">
+            <label className="block text-[16px] font-Poppins font-medium text-slate-700 dark:text-slate-300 mb-2">Demo Url</label>
             <input
               type="text"
               name=""
@@ -220,14 +218,14 @@ const CourseInformation: FC<Props> = ({
                 setCourseInfo({ ...courseInfo, demoUrl: e.target.value })
               }
               id="demoUrl"
-              placeholder="Enter Demo Url"
-              className={`
-            ${styles.input}`}
+              placeholder="e.g. https://www.youtube.com/watch?v=..."
+              className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-white/10 rounded-lg p-3 outline-none focus:border-[var(--hero-accent)] transition-colors text-slate-800 dark:text-white placeholder:text-slate-400"
             />
           </div>
         </div>
-        <br />
+        
         <div className="w-full">
+          <label className="block text-[16px] font-Poppins font-medium text-slate-700 dark:text-slate-300 mb-2">Course Thumbnail</label>
           <input
             type="file"
             accept="image/*"
@@ -237,8 +235,10 @@ const CourseInformation: FC<Props> = ({
           />
           <label
             htmlFor="file"
-            className={`w-full min-h-[10vh] dark:border-white border-[#00000026] p-3 border flex items-center justify-center ${
-              dragging ? "bg-blue-500" : "bg-transparent"
+            className={`w-full min-h-[200px] border-2 border-dashed rounded-xl flex flex-col items-center justify-center p-4 cursor-pointer transition-colors duration-300 ${
+              dragging 
+                ? "bg-[var(--hero-accent)]/10 border-[var(--hero-accent)]" 
+                : "bg-slate-50 dark:bg-slate-800/50 border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800"
             }`}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
@@ -247,26 +247,28 @@ const CourseInformation: FC<Props> = ({
             {courseInfo.thumbnail ? (
               <img
                 src={courseInfo.thumbnail}
-                alt=""
-                className="max-h-full w-full object-cover"
+                alt="thumbnail"
+                className="max-h-[300px] w-auto object-contain rounded"
               />
             ) : (
-              <span className="text-black dark:text-white">
-                Drag and drop your thumbnail here or click to browse
-              </span>
+              <div className="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400">
+                <svg className="w-12 h-12 mb-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+                <span className="font-Poppins font-medium">Click to browse or drag and drop</span>
+                <span className="text-sm mt-1">PNG, JPG, JPEG</span>
+              </div>
             )}
           </label>
         </div>
-        <br />
-        <div className="w-full flex items-center justify-end">
+        
+        <div className="w-full flex items-center justify-end mt-8">
           <input
             type="submit"
-            value="Next"
-            className="w-full 800px:w-[180px] h-[40px] bg-[#37a39a] text-center text-[#fff] rounded mt-8 cursor-pointer"
+            value="Next Step"
+            className="w-full md:w-auto px-8 py-3 bg-[#45CBA0] hover:bg-[#3ba885] transition-colors text-white font-Poppins font-semibold rounded-lg shadow-lg hover:shadow-xl cursor-pointer"
           />
         </div>
-        <br />
-        <br />
       </form>
     </div>
   );

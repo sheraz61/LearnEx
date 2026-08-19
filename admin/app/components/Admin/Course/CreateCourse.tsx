@@ -116,49 +116,55 @@ const CreateCourse = (props: Props) => {
   };
 
   return (
-    <div className="w-full flex min-h-screen">
-      <div className="w-[80%]">
-        {active === 0 && (
-          <CourseInformation
-            courseInfo={courseInfo}
-            setCourseInfo={setCourseInfo}
-            active={active}
-            setActive={setActive}
-          />
-        )}
+    <div className="w-full min-h-screen p-4 md:p-8">
+      <div className="w-full max-w-[1200px] mx-auto hero-glass dark:bg-[#111C43]/60 bg-white/80 border border-slate-200 dark:border-white/10 shadow-lg rounded-xl overflow-hidden flex flex-col lg:flex-row">
+        
+        {/* Stepper (Left/Top side) */}
+        <div className="w-full lg:w-[25%] p-6 lg:border-r border-slate-200 dark:border-white/10 bg-slate-50/50 dark:bg-slate-900/30">
+          <CourseOptions active={active} setActive={setActive} />
+        </div>
 
-        {active === 1 && (
-          <CourseData
-            benefits={benefits}
-            setBenefits={setBenefits}
-            prerequisites={prerequisites}
-            setPrerequisites={setPrerequisites}
-            active={active}
-            setActive={setActive}
-          />
-        )}
+        {/* Content (Right/Bottom side) */}
+        <div className="w-full lg:w-[75%] p-6 md:p-10">
+          {active === 0 && (
+            <CourseInformation
+              courseInfo={courseInfo}
+              setCourseInfo={setCourseInfo}
+              active={active}
+              setActive={setActive}
+            />
+          )}
 
-        {active === 2 && (
-          <CourseContent
-            active={active}
-            setActive={setActive}
-            courseContentData={courseContentData}
-            setCourseContentData={setCourseContentData}
-            handleSubmit={handleSubmit}
-          />
-        )}
+          {active === 1 && (
+            <CourseData
+              benefits={benefits}
+              setBenefits={setBenefits}
+              prerequisites={prerequisites}
+              setPrerequisites={setPrerequisites}
+              active={active}
+              setActive={setActive}
+            />
+          )}
 
-        {active === 3 && (
-          <CoursePreview
-            active={active}
-            setActive={setActive}
-            courseData={courseData}
-            handleCourseCreate={handleCourseCreate}
-          />
-        )}
-      </div>
-      <div className="w-[20%] mt-[100px] h-screen fixed z-[-1] top-18 right-0">
-        <CourseOptions active={active} setActive={setActive} />
+          {active === 2 && (
+            <CourseContent
+              active={active}
+              setActive={setActive}
+              courseContentData={courseContentData}
+              setCourseContentData={setCourseContentData}
+              handleSubmit={handleSubmit}
+            />
+          )}
+
+          {active === 3 && (
+            <CoursePreview
+              active={active}
+              setActive={setActive}
+              courseData={courseData}
+              handleCourseCreate={handleCourseCreate}
+            />
+          )}
+        </div>
       </div>
     </div>
   );

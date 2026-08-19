@@ -58,64 +58,79 @@ const CourseData: FC<Props> = ({
   };
 
   return (
-    <div className="w-[80%] m-auto mt-24 block">
-      <div>
-        <label className={`${styles.label} text-[20px]`} htmlFor="email">
-          What are the benefits for students in this course?
-        </label>
-        <br />
-        {benefits.map((benefit: any, index: number) => (
-          <input
-            type="text"
-            key={index}
-            name="Benefit"
-            placeholder="You will be able to build a full stack LMS Platform..."
-            required
-            className={`${styles.input} my-2`}
-            value={benefit.title}
-            onChange={(e) => handleBenefitChange(index, e.target.value)}
-          />
-        ))}
-        <AiOutlinePlusCircle
-          style={{ margin: "10px 0px", cursor: "pointer", width: "30px" }}
-          onClick={handleAddBenefit}
-        />
-      </div>
-
-      <div>
-        <label className={`${styles.label} text-[20px]`} htmlFor="email">
-          What are the prerequisites for starting this course?
-        </label>
-        <br />
-        {prerequisites.map((prerequisite, index) => (
-          <input
-            type="text"
-            key={index}
-            name="prerequisites"
-            placeholder="You need basic knowledge of MERN stack"
-            required
-            className={`${styles.input} my-2`}
-            value={prerequisite.title}
-            onChange={(e) => handlePrerequisitesChange(index, e.target.value)}
-          />
-        ))}
-        <AiOutlinePlusCircle
-          style={{ margin: "10px 0px", cursor: "pointer", width: "30px" }}
-          onClick={handleAddPrerequisites}
-        />
-      </div>
-      <div className="w-full flex items-center justify-between">
-        <div
-          className="w-full 800px:w-[180px] flex items-center justify-center h-[40px] bg-[#37a39a] text-center text-[#fff] rounded mt-8 cursor-pointer"
-          onClick={() => prevButton()}
-        >
-          Prev
+    <div className="w-full">
+      <h2 className="text-2xl font-Poppins font-semibold text-slate-800 dark:text-white mb-6">
+        Course Prerequisites & Benefits
+      </h2>
+      
+      <div className="space-y-8">
+        <div>
+          <label className="block text-[16px] font-Poppins font-medium text-slate-700 dark:text-slate-300 mb-4" htmlFor="benefits">
+            What are the benefits for students in this course?
+          </label>
+          <div className="space-y-3">
+            {benefits.map((benefit: any, index: number) => (
+              <input
+                type="text"
+                key={index}
+                name="Benefit"
+                placeholder="e.g. You will be able to build a full stack LMS Platform..."
+                required
+                className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-white/10 rounded-lg p-3 outline-none focus:border-[var(--hero-accent)] transition-colors text-slate-800 dark:text-white placeholder:text-slate-400"
+                value={benefit.title}
+                onChange={(e) => handleBenefitChange(index, e.target.value)}
+              />
+            ))}
+          </div>
+          <button
+            className="flex items-center gap-2 mt-4 text-[var(--hero-accent)] font-Poppins font-medium hover:text-[var(--hero-accent-2)] transition-colors"
+            onClick={handleAddBenefit}
+          >
+            <AiOutlinePlusCircle className="text-[20px]" />
+            Add Benefit
+          </button>
         </div>
-        <div
-          className="w-full 800px:w-[180px] flex items-center justify-center h-[40px] bg-[#37a39a] text-center text-[#fff] rounded mt-8 cursor-pointer"
-          onClick={() => handleOptions()}
-        >
-          Next
+
+        <div>
+          <label className="block text-[16px] font-Poppins font-medium text-slate-700 dark:text-slate-300 mb-4" htmlFor="prerequisites">
+            What are the prerequisites for starting this course?
+          </label>
+          <div className="space-y-3">
+            {prerequisites.map((prerequisite, index) => (
+              <input
+                type="text"
+                key={index}
+                name="prerequisites"
+                placeholder="e.g. You need basic knowledge of MERN stack"
+                required
+                className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-white/10 rounded-lg p-3 outline-none focus:border-[var(--hero-accent)] transition-colors text-slate-800 dark:text-white placeholder:text-slate-400"
+                value={prerequisite.title}
+                onChange={(e) => handlePrerequisitesChange(index, e.target.value)}
+              />
+            ))}
+          </div>
+          <button
+            className="flex items-center gap-2 mt-4 text-[var(--hero-accent)] font-Poppins font-medium hover:text-[var(--hero-accent-2)] transition-colors"
+            onClick={handleAddPrerequisites}
+          >
+            <AiOutlinePlusCircle className="text-[20px]" />
+            Add Prerequisite
+          </button>
+        </div>
+        
+        <div className="w-full flex items-center justify-between mt-8 pt-8 border-t border-slate-200 dark:border-white/10">
+          <button
+            className="w-full md:w-auto px-8 py-3 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors text-slate-800 dark:text-white font-Poppins font-semibold rounded-lg shadow-md cursor-pointer"
+            onClick={() => prevButton()}
+          >
+            Previous
+          </button>
+          <button
+            className="w-full md:w-auto px-8 py-3 bg-[#45CBA0] hover:bg-[#3ba885] transition-colors text-white font-Poppins font-semibold rounded-lg shadow-lg hover:shadow-xl cursor-pointer"
+            onClick={() => handleOptions()}
+          >
+            Next Step
+          </button>
         </div>
       </div>
     </div>

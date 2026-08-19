@@ -39,119 +39,116 @@ const CoursePreview: FC<Props> = ({
   };
 
   return (
-    <div className="w-[90%] m-auto py-5 mb-5">
-      <div className="w-full relative">
-        <div className="w-full mt-10">
-          <CoursePlayer
-            videoUrl={courseData?.demoUrl}
-            title={courseData?.title}
-          />
-        </div>
-        <div className="flex items-center">
-          <h1 className="pt-5 text-[25px]">
-            {courseData?.price === 0 ? "Free" : courseData?.price + "$"}
-          </h1>
-          <h5 className="pl-3 text-[20px] mt-2 line-through opacity-80">
-            {courseData?.estimatedPrice}$
-          </h5>
+    <div className="w-full">
+      <h2 className="text-2xl font-Poppins font-semibold text-slate-800 dark:text-white mb-6">
+        Course Preview
+      </h2>
+      <div className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-white/10 rounded-xl p-6 md:p-8">
+        <div className="w-full relative">
+          <div className="w-full rounded-xl overflow-hidden shadow-lg border border-slate-200 dark:border-white/10">
+            <CoursePlayer
+              videoUrl={courseData?.demoUrl}
+              title={courseData?.title}
+            />
+          </div>
+          
+          <div className="flex items-center mt-6">
+            <h1 className="text-[32px] font-Poppins font-bold text-slate-800 dark:text-white">
+              {courseData?.price === 0 ? "Free" : courseData?.price + "$"}
+            </h1>
+            <h5 className="pl-4 text-[20px] line-through text-slate-500 dark:text-slate-400">
+              {courseData?.estimatedPrice}$
+            </h5>
+            <h4 className="pl-4 text-[20px] font-semibold text-[var(--hero-accent)]">
+              {discountPercentagePrice}% Off
+            </h4>
+          </div>
 
-          <h4 className="pl-5 pt-4 text-[22px]">
-            {discountPercentagePrice}% Off
-          </h4>
-        </div>
+          <div className="flex items-center mt-4">
+            <div className="w-full md:w-[200px] py-3 bg-red-500 text-white text-center font-Poppins font-semibold rounded-lg shadow-md opacity-80 cursor-not-allowed">
+              Buy Now {courseData?.price}$
+            </div>
+          </div>
 
-        <div className="flex items-center">
-          <div
-            className={`${styles.button} !w-[180px] my-3 font-Poppins !bg-[crimson] cursor-not-allowed`}
-          >
-            Buy Now {courseData?.price}$
+          <div className="flex items-center gap-4 mt-6">
+            <input
+              type="text"
+              placeholder="Discount code..."
+              className="w-full md:w-[60%] bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-white/10 rounded-lg p-3 outline-none focus:border-[var(--hero-accent)] transition-colors text-slate-800 dark:text-white placeholder:text-slate-400"
+            />
+            <div className="w-[120px] py-3 bg-[var(--hero-accent)] text-white text-center font-Poppins font-semibold rounded-lg shadow-md cursor-pointer hover:bg-[var(--hero-accent-2)] transition-colors">
+              Apply
+            </div>
+          </div>
+          
+          <div className="mt-6 space-y-2 text-slate-600 dark:text-slate-300 font-Poppins">
+            <p className="flex items-center gap-2"><IoCheckmarkDoneOutline className="text-[var(--hero-accent)]" /> Source code included</p>
+            <p className="flex items-center gap-2"><IoCheckmarkDoneOutline className="text-[var(--hero-accent)]" /> Full lifetime access</p>
+            <p className="flex items-center gap-2"><IoCheckmarkDoneOutline className="text-[var(--hero-accent)]" /> Certificate of completion</p>
+            <p className="flex items-center gap-2"><IoCheckmarkDoneOutline className="text-[var(--hero-accent)]" /> Premium Support</p>
           </div>
         </div>
-
-        <div className="flex items-center">
-          <input
-            type="text"
-            name=""
-            id=""
-            placeholder="Discount code..."
-            className={`${styles.input} 1500px:!w-[50%] 1100px:w-[60%] ml-3 !mt-0`}
-          />
-          <div
-            className={`${styles.button} !w-[120px] my-3 ml-4 font-Poppins cursor-pointer`}
-          >
-            Apply
+        
+        <div className="w-full mt-12 pt-8 border-t border-slate-200 dark:border-white/10">
+          <div className="w-full">
+            <h1 className="text-[32px] font-Poppins font-bold text-slate-800 dark:text-white leading-tight">
+              {courseData?.name}
+            </h1>
+            <div className="flex items-center justify-between mt-4">
+              <div className="flex items-center gap-2">
+                <Ratings rating={0} />
+                <span className="text-slate-600 dark:text-slate-400 font-Poppins">0 Reviews</span>
+              </div>
+              <span className="text-slate-600 dark:text-slate-400 font-Poppins">0 Students</span>
+            </div>
+            
+            <h2 className="text-[24px] font-Poppins font-semibold text-slate-800 dark:text-white mt-10 mb-4">
+              What you will learn from this course?
+            </h2>
+            <div className="space-y-3">
+              {courseData?.benefits?.map((item: any, index: number) => (
+                <div className="flex items-start gap-3 text-slate-700 dark:text-slate-300 font-Poppins" key={index}>
+                  <IoCheckmarkDoneOutline className="text-[var(--hero-accent)] text-[24px] flex-shrink-0 mt-0.5" />
+                  <p>{item.title}</p>
+                </div>
+              ))}
+            </div>
+            
+            <h2 className="text-[24px] font-Poppins font-semibold text-slate-800 dark:text-white mt-10 mb-4">
+              What are the prerequisites for starting this course?
+            </h2>
+            <div className="space-y-3">
+              {courseData?.prerequisites?.map((item: any, index: number) => (
+                <div className="flex items-start gap-3 text-slate-700 dark:text-slate-300 font-Poppins" key={index}>
+                  <IoCheckmarkDoneOutline className="text-[var(--hero-accent)] text-[24px] flex-shrink-0 mt-0.5" />
+                  <p>{item.title}</p>
+                </div>
+              ))}
+            </div>
+            
+            <h2 className="text-[24px] font-Poppins font-semibold text-slate-800 dark:text-white mt-10 mb-4">
+              Course Details
+            </h2>
+            <p className="text-[16px] text-slate-600 dark:text-slate-300 font-Poppins leading-relaxed whitespace-pre-line">
+              {courseData?.description}
+            </p>
           </div>
         </div>
-        <p className="pb-1">• Source code included</p>
-        <p className="pb-1">• Full lifetime access</p>
-        <p className="pb-1">• Certificate of completion</p>
-        <p className="pb-3 800px:pb-1">• Premium Support</p>
       </div>
-      <div className="w-full">
-        <div className="w-full 800px:pr-5">
-          <h1 className="text-[25px] font-Poppins font-[600]">
-            {courseData?.name}
-          </h1>
-          <div className="flex items-center justify-between pt-3">
-            <div className="flex items-center">
-              <Ratings rating={0} />
-              <h5>0 Reviews</h5>
-            </div>
-            <h5>0 Students</h5>
-          </div>
-          <br />
-          <h1 className="text-[25px] font-Poppins font-[600]">
-            What you will learn from this course?
-          </h1>
-        </div>
-        {courseData?.benefits?.map((item: any, index: number) => (
-          <div className="w-full flex 800px:items-center py-2" key={index}>
-            <div className="w-[15px] mr-1">
-              <IoCheckmarkDoneOutline size={20} />
-            </div>
-            <p className="pl-2">{item.title}</p>
-          </div>
-        ))}
-        <br />
-        <br />
-        <h1 className="text-[25px] font-Poppins font-[600]">
-          What are the prerequisites for starting this course?
-        </h1>
-        {courseData?.prerequisites?.map((item: any, index: number) => (
-          <div className="w-full flex 800px:items-center py-2" key={index}>
-            <div className="w-[15px] mr-1">
-              <IoCheckmarkDoneOutline size={20} />
-            </div>
-            <p className="pl-2">{item.title}</p>
-          </div>
-        ))}
-        <br />
-        <br />
-        {/* course description */}
-        <div className="w-full">
-          <h1 className="text-[25px] font-Poppins font-[600]">
-            Course Details
-          </h1>
-          <p className="text-[18px] mt-[20px] whitespace-pre-line w-full overflow-hidden">
-            {courseData?.description}
-          </p>
-        </div>
-        <br />
-        <br />
-      </div>
-      <div className="w-full flex items-center justify-between">
-        <div
-          className="w-full 800px:w-[180px] flex items-center justify-center h-[40px] bg-[#37a39a] text-center text-[#fff] rounded mt-8 cursor-pointer"
+      
+      <div className="w-full flex items-center justify-between mt-8">
+        <button
+          className="w-full md:w-auto px-8 py-3 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors text-slate-800 dark:text-white font-Poppins font-semibold rounded-lg shadow-md cursor-pointer"
           onClick={() => prevButton()}
         >
-          Prev
-        </div>
-        <div
-          className="w-full 800px:w-[180px] flex items-center justify-center h-[40px] bg-[#37a39a] text-center text-[#fff] rounded mt-8 cursor-pointer"
+          Previous
+        </button>
+        <button
+          className="w-full md:w-auto px-8 py-3 bg-[#45CBA0] hover:bg-[#3ba885] transition-colors text-white font-Poppins font-semibold rounded-lg shadow-lg hover:shadow-xl cursor-pointer"
           onClick={() => createCourse()}
         >
-          {isEdit ? "Update" : "Create"}
-        </div>
+          {isEdit ? "Update Course" : "Create Course"}
+        </button>
       </div>
     </div>
   );
