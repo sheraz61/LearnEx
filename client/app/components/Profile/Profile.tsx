@@ -24,8 +24,7 @@ const Profile: FC<Props> = ({ user }) => {
 
   const logOutHandler = async () => {
     await logOutMutation(undefined);
-    await signOut({ redirect: false });
-    window.location.href = "/";
+    signOut();
   };
 
   useEffect(() => {
