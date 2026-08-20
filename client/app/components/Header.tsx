@@ -60,6 +60,14 @@ const Header: FC<Props> = ({
 
   const [logOutMutation] = useLogOutMutation();
 
+  const handleRefetch = () => {
+    if (!hasSession) {
+      setHasSession(true);
+    } else {
+      refetch();
+    }
+  };
+
   /* --------------------------------
      Social authentication
   --------------------------------- */
@@ -77,7 +85,7 @@ const Header: FC<Props> = ({
 
     if (isSuccess) {
       toast.success("Login successfully");
-      refetch();
+      handleRefetch();
       reset();
     }
 
@@ -371,7 +379,7 @@ const Header: FC<Props> = ({
           setRoute={setRoute}
           activeItem={activeItem}
           component={Login}
-          refetch={refetch}
+          refetch={handleRefetch}
         />
       )}
 
