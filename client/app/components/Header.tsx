@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
@@ -40,13 +40,19 @@ const Header: FC<Props> = ({
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [openSidebar, setOpenSidebar] = useState(false);
-  const [hasSession, setHasSession] = useState(false);
 
-  useEffect(() => {
+  // Read localStorage synchronously on first render (this is a client component)
+  const [hasSession, setHasSession] = useState(() => {
     if (typeof window !== "undefined") {
-      setHasSession(!!localStorage.getItem("hasSession"));
+      return !!localStorage.getItem("hasSession");
     }
-  }, []);
+    return false;
+  });
+
+  // Track whether we had a session at mount time — only show the full-screen
+  // Loader for returning users, never after a mid-lifecycle state change
+  // (e.g. after social auth completes and flips hasSession false→true).
+  const hadSessionAtMount = useRef(hasSession);
 
   const {
     data: userData,
@@ -62,7 +68,7 @@ const Header: FC<Props> = ({
 
   const handleRefetch = () => {
     if (!hasSession) {
-      setHasSession(true);
+      setHasSession(true); // un-skips the query — it will auto-fetch
     } else {
       refetch();
     }
@@ -75,6 +81,7 @@ const Header: FC<Props> = ({
   useEffect(() => {
     if (isLoading) return;
 
+    // If there's a NextAuth session but no backend user data, call socialAuth
     if (!userData && session?.user) {
       socialAuth({
         email: session.user.email,
@@ -89,8 +96,15 @@ const Header: FC<Props> = ({
       reset();
     }
 
+    // Clean up stale session flag — only when localStorage still thinks
+    // we have a session (prevents firing for every logged-out visitor)
     if (session === null && !userData) {
-      logOutMutation(undefined);
+      if (typeof window !== "undefined" && localStorage.getItem("hasSession")) {
+        logOutMutation(undefined);
+      }
+      if (hasSession) {
+        setHasSession(false);
+      }
     }
   }, [session, userData, isLoading, isSuccess]);
 
@@ -122,7 +136,9 @@ const Header: FC<Props> = ({
     }
   };
 
-  if (isLoading) {
+  // Only show the full-screen loader for returning users on initial page load.
+  // Never show it after a mid-lifecycle transition (social auth, login modal).
+  if (isLoading && hadSessionAtMount.current) {
     return <Loader />;
   }
 
