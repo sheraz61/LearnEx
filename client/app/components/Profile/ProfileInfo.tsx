@@ -52,10 +52,6 @@ const ProfileInfo: FC<Props> = ({ avatar, user }) => {
       setLoadUser(true);
       toast.success("Profile updated successfully!");
     }
-
-    if (error || updateError) {
-      console.log(error || updateError);
-    }
   }, [isSuccess, error, success, updateError]);
 
   const imageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {

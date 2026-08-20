@@ -27,7 +27,7 @@ export const authApi = apiSlice.injectEndpoints({
             })
           );
         } catch (error: any) {
-          console.log(error);
+          // console.log(error);
         }
       },
     }),
@@ -60,8 +60,11 @@ export const authApi = apiSlice.injectEndpoints({
               user: result.data.user,
             })
           );
+          if (typeof window !== "undefined") {
+            localStorage.setItem("hasSession", "true");
+          }
         } catch (error: any) {
-          console.log("Login failed:", error);
+          // console.log("Login failed:", error);
         }
       },
     }),
@@ -85,8 +88,11 @@ export const authApi = apiSlice.injectEndpoints({
               user: result.data.user,
             })
           );
+          if (typeof window !== "undefined") {
+            localStorage.setItem("hasSession", "true");
+          }
         } catch (error: any) {
-          console.log(error);
+          // console.log(error);
         }
       },
     }),
@@ -99,9 +105,12 @@ export const authApi = apiSlice.injectEndpoints({
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         try {
           await queryFulfilled;
+          if (typeof window !== "undefined") {
+            localStorage.removeItem("hasSession");
+          }
           dispatch(userLoggedOut());
         } catch (error: any) {
-          console.log(error);
+          // console.log(error);
         }
       },
     }),

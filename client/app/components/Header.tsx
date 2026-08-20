@@ -40,16 +40,23 @@ const Header: FC<Props> = ({
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [openSidebar, setOpenSidebar] = useState(false);
+  const [hasSession, setHasSession] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setHasSession(!!localStorage.getItem("hasSession"));
+    }
+  }, []);
 
   const {
     data: userData,
     isLoading,
     refetch,
-  } = useLoadUserQuery(undefined, {});
+  } = useLoadUserQuery(undefined, { skip: !hasSession });
 
   const { data: session } = useSession();
 
-  const [socialAuth, { isSuccess, error }] = useSocialAuthMutation();
+  const [socialAuth, { isSuccess, error, reset }] = useSocialAuthMutation();
 
   const [logOutMutation] = useLogOutMutation();
 
@@ -68,9 +75,10 @@ const Header: FC<Props> = ({
       });
     }
 
-    if (session === null && isSuccess) {
+    if (isSuccess) {
       toast.success("Login successfully");
       refetch();
+      reset();
     }
 
     if (session === null && !userData) {

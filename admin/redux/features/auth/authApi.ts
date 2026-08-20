@@ -27,7 +27,7 @@ export const authApi = apiSlice.injectEndpoints({
             })
           );
         } catch (error: any) {
-          console.log("Login failed:", error);
+          // console.log("Login failed:", error);
         }
       },
     }),
@@ -44,7 +44,7 @@ export const authApi = apiSlice.injectEndpoints({
             userLoggedOut()
           );
         } catch (error: any) {
-          console.log(error);
+          // console.log(error);
         }
       },
     }),

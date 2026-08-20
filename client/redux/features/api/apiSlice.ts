@@ -27,6 +27,9 @@ const baseQueryWithReauth: BaseQueryFn<
       result = await baseQuery(args, api, extraOptions);
     } else {
       // If refresh fails, log the user out
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("hasSession");
+      }
       api.dispatch(userLoggedOut());
     }
   }
@@ -61,7 +64,7 @@ export const apiSlice = createApi({
             })
           );
         } catch (error: any) {
-          console.log(error);
+          // console.log(error);
         }
       },
     }),
