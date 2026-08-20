@@ -16,7 +16,7 @@ import Verification from "../components/Auth/Verification";
 import Loader from "./Loader/Loader";
 
 import {
-  useLogOutQuery,
+  useLogOutMutation,
   useSocialAuthMutation,
 } from "@/redux/features/auth/authApi";
 import { useLoadUserQuery } from "@/redux/features/api/apiSlice";
@@ -40,7 +40,6 @@ const Header: FC<Props> = ({
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [openSidebar, setOpenSidebar] = useState(false);
-  const [logout, setLogout] = useState(false);
 
   const {
     data: userData,
@@ -52,9 +51,7 @@ const Header: FC<Props> = ({
 
   const [socialAuth, { isSuccess, error }] = useSocialAuthMutation();
 
-  useLogOutQuery(undefined, {
-    skip: !logout,
-  });
+  const [logOutMutation] = useLogOutMutation();
 
   /* --------------------------------
      Social authentication
@@ -77,7 +74,7 @@ const Header: FC<Props> = ({
     }
 
     if (session === null && !userData) {
-      setLogout(true);
+      logOutMutation(undefined);
     }
   }, [session, userData, isLoading, isSuccess]);
 

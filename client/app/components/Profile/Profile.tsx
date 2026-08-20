@@ -1,7 +1,7 @@
 "use client";
 
 import React, { FC, useEffect, useState } from "react";
-import { useLogOutQuery } from "../../../redux/features/auth/authApi";
+import { useLogOutMutation } from "../../../redux/features/auth/authApi";
 import { signOut } from "next-auth/react";
 import SideBarProfile from "./SideBarProfile";
 import ProfileInfo from "./ProfileInfo";
@@ -15,18 +15,15 @@ type Props = {
 
 const Profile: FC<Props> = ({ user }) => {
   const [avatar, setAvatar] = useState<string | null>(null);
-  const [logout, setLogout] = useState(false);
   const [active, setActive] = useState(1);
   const [courses, setCourses] = useState([]);
 
   const { data } = useGetUsersAllCoursesQuery(undefined, {});
 
-  useLogOutQuery(undefined, {
-    skip: !logout,
-  });
+  const [logOutMutation] = useLogOutMutation();
 
   const logOutHandler = async () => {
-    setLogout(true);
+    await logOutMutation(undefined);
     await signOut();
   };
 
