@@ -14,13 +14,13 @@ dotenv.config();
 export const app = express();
 //body parser middleware
 app.use(express.json({ limit: "50mb" }));
-app.use(express.urlencoded({ extended: true , limit: "50mb"}));
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 // cookie parser middleware
 app.use(cookieParser());
 // cross origin resoruce sharing
 app.use(
   cors({
-    origin: process.env.ORIGIN ? JSON.parse(process.env.ORIGIN.replace(/'/g, '"')) : ['http://localhost:3000','http://localhost:3001'],
+    origin: ["http://localhost:3000", "http://localhost:3001", "https://learn-ex-admin.vercel.app", "https://learn-ex-client.vercel.app"],
     credentials: true
   }),
 );
@@ -33,12 +33,12 @@ app.get("/", (req: Request, res: Response, next: NextFunction) => {
 });
 
 // routes
-app.use('/api/v1',userRouter)
-app.use('/api/v1',courseRouter)
-app.use('/api/v1',orderRouter)
-app.use('/api/v1',notificationRouter)
-app.use('/api/v1',analyticsRouter)
-app.use('/api/v1',layoutRouter)
+app.use('/api/v1', userRouter)
+app.use('/api/v1', courseRouter)
+app.use('/api/v1', orderRouter)
+app.use('/api/v1', notificationRouter)
+app.use('/api/v1', analyticsRouter)
+app.use('/api/v1', layoutRouter)
 // testing api
 app.get("/test", (req: Request, res: Response, next: NextFunction) => {
   res.status(200).json({

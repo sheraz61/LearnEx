@@ -230,10 +230,10 @@ const CourseContent: FC<Props> = ({
                       />
                     </div>
                     <div>
-                      <label className="block text-[14px] font-Poppins font-medium text-slate-700 dark:text-slate-300 mb-2">Video Url</label>
+                      <label className="block text-[14px] font-Poppins font-medium text-slate-700 dark:text-slate-300 mb-2">Video Url (YouTube)</label>
                       <input
                         type="text"
-                        placeholder="e.g. https://youtube.com/..."
+                        placeholder="e.g. https://www.youtube.com/watch?v=... or YouTube Video ID"
                         className="w-full bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-white/10 rounded-lg p-3 outline-none focus:border-[var(--hero-accent)] transition-colors text-slate-800 dark:text-white placeholder:text-slate-400"
                         value={item.videoUrl}
                         onChange={(e) => {

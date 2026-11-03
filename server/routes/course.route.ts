@@ -1,7 +1,19 @@
 import express from "express";
 
 import { authorizeRoles, isAuthenticated } from "../middleware/auth.js";
-import { addAnwser, addQuestion, addReplyToReview, addReview, deleteCourse, editCourse, generateVideoUrl, getAdminAllCourses, getAllCourses, getCourseByUser, getSingleCourse, uploadCourse } from "../controllers/course.controller.js";
+import {
+  addAnwser,
+  addQuestion,
+  addReplyToReview,
+  addReview,
+  deleteCourse,
+  editCourse,
+  getAdminAllCourses,
+  getAllCourses,
+  getCourseByUser,
+  getSingleCourse,
+  uploadCourse,
+} from "../controllers/course.controller.js";
 import { updateAccessToken } from "../controllers/user.controller.js";
 
 const router = express.Router();
@@ -58,14 +70,11 @@ router.get(
   getAdminAllCourses,
 );
 
-router.post("/getVdoCipherOTP", generateVideoUrl);
-
 router.delete(
   "/delete-course/:id",
   isAuthenticated,
   authorizeRoles("admin"),
   deleteCourse,
 );
-
 
 export default router;
